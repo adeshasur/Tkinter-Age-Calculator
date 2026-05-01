@@ -86,8 +86,8 @@ def main(page: ft.Page):
 
     # --- Right Panel: Analytics Dashboard ---
     
-    res_age = ft.Text("0", size=150, weight="bold", color=TEXT_MAIN)
-    res_name = ft.Text("Ready to Analyze", size=32, weight="bold", color=TEXT_MAIN)
+    res_age = ft.Text("0", size=100, weight="bold", color=TEXT_MAIN)
+    res_name = ft.Text("Ready to Analyze", size=24, weight="bold", color=TEXT_MAIN)
     
     progress_fill = ft.Container(
         width=0, height=24,
@@ -205,12 +205,12 @@ def main(page: ft.Page):
             life_text,
             progress_track
         ], horizontal_alignment="center", spacing=0),
-        padding=60,
-        border_radius=40,
+        padding=ft.padding.symmetric(30, 40),
+        border_radius=28,
         bgcolor="#FFFFFF",
         border=ft.border.all(1, BORDER_COLOR),
-        shadow=ft.BoxShadow(blur_radius=60, color=ft.Colors.with_opacity(0.05, ft.Colors.BLACK), offset=ft.Offset(0, 20)),
-        margin=ft.margin.only(bottom=50)
+        shadow=ft.BoxShadow(blur_radius=40, color=ft.Colors.with_opacity(0.04, ft.Colors.BLACK), offset=ft.Offset(0, 15)),
+        margin=ft.margin.only(bottom=25)
     )
 
     results_container = ft.Column([
