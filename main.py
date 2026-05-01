@@ -36,7 +36,7 @@ class AnalyticsCard(ft.Container):
                         bgcolor=ft.Colors.with_opacity(0.1, color),
                         border_radius=10
                     ),
-                    ft.Text(title, size=10, color=TEXT_SECONDARY, weight="w700", letter_spacing=0.5)
+                    ft.Text(title, size=10, color=TEXT_SECONDARY, weight="w700")
                 ], spacing=10),
                 ft.Container(height=5),
                 self.value_label,
@@ -167,10 +167,10 @@ def main(page: ft.Page):
                 ft.Image(src="Age.png", height=85, fit="contain"),
             ], horizontal_alignment="center", spacing=10),
             ft.Container(height=50),
-            ft.Text("MEMBER PROFILE", size=10, weight="bold", color=TEXT_SECONDARY, letter_spacing=1),
+            ft.Text("MEMBER PROFILE", size=10, weight="bold", color=TEXT_SECONDARY),
             name_input,
             ft.Container(height=15),
-            ft.Text("BIRTH REGISTRY", size=10, weight="bold", color=TEXT_SECONDARY, letter_spacing=1),
+            ft.Text("BIRTH REGISTRY", size=10, weight="bold", color=TEXT_SECONDARY),
             ft.Row([year_input, month_input, day_input], spacing=10),
             ft.Container(height=40),
             ft.ElevatedButton(
