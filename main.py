@@ -1,5 +1,5 @@
 import flet as ft
-from datetime import datetime, date, timedelta
+from datetime import datetime, date
 
 # --- Logic ---
 
@@ -26,7 +26,12 @@ class StatCard(ft.Container):
         self.padding = 20
         self.border_radius = 20
         self.bgcolor = ft.Colors.with_opacity(0.1, ft.Colors.BLUE_GREY_900)
-        self.border = ft.border.all(1, ft.Colors.with_opacity(0.1, ft.Colors.WHITE))
+        self.border = ft.Border(
+            ft.BorderSide(1, ft.Colors.with_opacity(0.1, ft.Colors.WHITE)),
+            ft.BorderSide(1, ft.Colors.with_opacity(0.1, ft.Colors.WHITE)),
+            ft.BorderSide(1, ft.Colors.with_opacity(0.1, ft.Colors.WHITE)),
+            ft.BorderSide(1, ft.Colors.with_opacity(0.1, ft.Colors.WHITE))
+        )
         self.expand = True
 
 def main(page: ft.Page):
@@ -47,9 +52,9 @@ def main(page: ft.Page):
     
     # Left Column: Input Card
     name_input = ft.TextField(label="Full Name", border_radius=15, border_color=ft.Colors.BLUE_GREY_700, focused_border_color=ft.Colors.BLUE_400, label_style=ft.TextStyle(color=ft.Colors.BLUE_GREY_400))
-    year_input = ft.TextField(label="Year", border_radius=15, width=100, border_color=ft.Colors.BLUE_GREY_700)
-    month_input = ft.TextField(label="Month", border_radius=15, width=80, border_color=ft.Colors.BLUE_GREY_700)
-    day_input = ft.TextField(label="Day", border_radius=15, width=80, border_color=ft.Colors.BLUE_GREY_700)
+    year_input = ft.TextField(label="Year", border_radius=15, width=110, border_color=ft.Colors.BLUE_GREY_700)
+    month_input = ft.TextField(label="Month", border_radius=15, width=100, border_color=ft.Colors.BLUE_GREY_700)
+    day_input = ft.TextField(label="Day", border_radius=15, width=90, border_color=ft.Colors.BLUE_GREY_700)
 
     # Result Labels
     res_age = ft.Text("0", size=100, weight="bold", color=ft.Colors.BLUE_400)
@@ -71,8 +76,13 @@ def main(page: ft.Page):
                 padding=40,
                 border_radius=30,
                 bgcolor=ft.Colors.with_opacity(0.05, ft.Colors.BLUE_400),
-                border=ft.border.all(1, ft.Colors.with_opacity(0.2, ft.Colors.BLUE_400)),
-                margin=ft.margin.only(bottom=20)
+                border=ft.Border(
+                    ft.BorderSide(1, ft.Colors.with_opacity(0.2, ft.Colors.BLUE_400)),
+                    ft.BorderSide(1, ft.Colors.with_opacity(0.2, ft.Colors.BLUE_400)),
+                    ft.BorderSide(1, ft.Colors.with_opacity(0.2, ft.Colors.BLUE_400)),
+                    ft.BorderSide(1, ft.Colors.with_opacity(0.2, ft.Colors.BLUE_400))
+                ),
+                margin=ft.Margin(0, 0, 0, 20)
             ),
             ft.ResponsiveRow(
                 [
@@ -133,14 +143,14 @@ def main(page: ft.Page):
                 ft.Text("AGE PRO", size=24, weight="bold", color=ft.Colors.WHITE),
                 ft.Divider(height=40, color=ft.Colors.BLUE_GREY_800),
                 name_input,
-                ft.Row([year_input, month_input, day_input], spacing=10),
+                ft.Row([year_input, month_input, day_input], spacing=10, alignment=ft.MainAxisAlignment.CENTER),
                 ft.ElevatedButton("Run Analysis", icon=ft.Icons.AUTO_GRAPH, bgcolor=ft.Colors.BLUE_600, color=ft.Colors.WHITE, height=55, on_click=calculate_click),
                 ft.Text("Press F11 for Full Screen", size=10, color=ft.Colors.BLUE_GREY_600),
             ],
             spacing=20,
             horizontal_alignment="center",
         ),
-        width=350,
+        width=380, # Increased slightly
         padding=40,
         bgcolor="#111827",
         border_radius=30,
