@@ -3,7 +3,7 @@ from datetime import datetime, date
 
 # --- Design Language ---
 ACCENT = "#007AFF"
-SIDEBAR_BG = "#1A1C1E" # Deep Pro Charcoal
+SIDEBAR_BG = "#1A1C1E"
 MAIN_BG = "#F5F7FA"
 CARD_BG = "#FFFFFF"
 TEXT_HEADING = "#111827"
@@ -89,14 +89,22 @@ def main(page: ft.Page):
     life_progress = ft.ProgressBar(width=600, color=ACCENT, bgcolor="#E5E7EB", height=10, border_radius=5)
     progress_text = ft.Text("Journey Progress: 0%", size=14, color=TEXT_BODY, weight="w500")
     
+    # Direct References for Reliability
+    card_zodiac = StatCard("Zodiac Sign", ft.Icons.STARS)
+    card_next = StatCard("Next Birthday", ft.Icons.CAKE)
+    card_days = StatCard("Total Days", ft.Icons.CALENDAR_MONTH)
+    card_weeks = StatCard("Total Weeks", ft.Icons.CALENDAR_VIEW_WEEK)
+    card_hearts = StatCard("Heartbeats", ft.Icons.FAVORITE)
+    card_dreams = StatCard("Sleep & Dreams", ft.Icons.BEDTIME)
+
     grid = ft.ResponsiveRow(
         [
-            ft.Column([StatCard("Zodiac Sign", ft.Icons.STARS)], col={"sm": 6, "md": 4}),
-            ft.Column([StatCard("Next Birthday", ft.Icons.CAKE)], col={"sm": 6, "md": 4}),
-            ft.Column([StatCard("Total Days", ft.Icons.CALENDAR_MONTH)], col={"sm": 6, "md": 4}),
-            ft.Column([StatCard("Total Weeks", ft.Icons.CALENDAR_VIEW_WEEK)], col={"sm": 6, "md": 4}),
-            ft.Column([StatCard("Heartbeats", ft.Icons.FAVORITE)], col={"sm": 6, "md": 4}),
-            ft.Column([StatCard("Sleep & Dreams", ft.Icons.BEDTIME)], col={"sm": 6, "md": 4}),
+            ft.Column([card_zodiac], col={"sm": 6, "md": 4}),
+            ft.Column([card_next], col={"sm": 6, "md": 4}),
+            ft.Column([card_days], col={"sm": 6, "md": 4}),
+            ft.Column([card_weeks], col={"sm": 6, "md": 4}),
+            ft.Column([card_hearts], col={"sm": 6, "md": 4}),
+            ft.Column([card_dreams], col={"sm": 6, "md": 4}),
         ],
         spacing=24,
         run_spacing=24,
@@ -134,6 +142,10 @@ def main(page: ft.Page):
 
     def calculate_click(e):
         try:
+            # Basic validation
+            if not year_input.value or not month_input.value or not day_input.value:
+                raise ValueError("Missing data")
+
             name = name_input.value or "Explorer"
             y, m, d = int(year_input.value), int(month_input.value), int(day_input.value)
             birth = datetime(y, m, d)
@@ -143,28 +155,32 @@ def main(page: ft.Page):
             diff = today - birth
             perc = min(1.0, age / AVG_LIFE_EXPECTANCY)
             
+            # UI Updates
             res_name.value = f"Greetings, {name}"
             res_age.value = str(age)
             life_progress.value = perc
             progress_text.value = f"Life Journey Progress: {int(perc*100)}% (Based on 80yr avg)"
             
-            # Update Grid
-            grid.controls[0].content.controls[0].value_label.value = get_zodiac(m, d)
-            grid.controls[1].content.controls[0].value_label.value = f"{(date(today.year + (date(today.year, m, d) < today.date()), m, d) - today.date()).days} Days"
-            grid.controls[2].content.controls[0].value_label.value = f"{diff.days:,}"
-            grid.controls[3].content.controls[0].value_label.value = f"{diff.days // 7:,}"
-            grid.controls[4].content.controls[0].value_label.value = f"{diff.days * 24 * 60 * 72:,}"
-            grid.controls[5].content.controls[0].value_label.value = f"{int(age * 0.33)} Yrs"
+            # Update Cards Directly
+            card_zodiac.value_label.value = get_zodiac(m, d)
+            next_b = date(today.year, m, d)
+            if next_b < today.date(): next_b = date(today.year + 1, m, d)
+            card_next.value_label.value = f"{(next_b - today.date()).days} Days"
+            card_days.value_label.value = f"{diff.days:,}"
+            card_weeks.value_label.value = f"{diff.days // 7:,}"
+            card_hearts.value_label.value = f"{diff.days * 24 * 60 * 72:,}"
+            card_dreams.value_label.value = f"{int(age * 0.33)} Yrs"
 
             dashboard.visible = True
             dashboard.opacity = 1
             page.update()
-        except:
-            page.snack_bar = ft.SnackBar(ft.Text("Please enter a valid date!"))
+        except Exception as ex:
+            print(f"Error: {ex}")
+            page.snack_bar = ft.SnackBar(ft.Text("Please enter a valid birth date!"))
             page.snack_bar.open = True
             page.update()
 
-    # --- Dark Sidebar (Pro Aesthetic) ---
+    # --- Dark Sidebar ---
     
     sidebar = ft.Container(
         content=ft.Column(
@@ -206,8 +222,6 @@ def main(page: ft.Page):
         bgcolor=SIDEBAR_BG,
     )
 
-    # --- Main Layout ---
-    
     page.add(
         ft.Row(
             [
