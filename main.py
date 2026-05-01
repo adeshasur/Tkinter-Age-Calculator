@@ -83,7 +83,7 @@ def main(page: ft.Page):
     card_sleep = StatCard("Dreaming", ft.Icons.BEDTIME)
     card_next = StatCard("Next Birthday", ft.Icons.CAKE)
 
-    # Dashboard Container (More Compact & Moved Up)
+    # Dashboard Container
     dashboard = ft.Column(
         [
             ft.Container(
@@ -95,10 +95,9 @@ def main(page: ft.Page):
                     progress_text,
                     life_progress
                 ], horizontal_alignment="center", spacing=0),
-                padding=35, # Smaller internal padding
+                padding=35,
                 border_radius=30,
                 bgcolor="#FFFFFF",
-                # Complex Gradient for "Texture" look
                 gradient=ft.RadialGradient(
                     center=ft.Alignment(0, 0),
                     radius=2,
@@ -161,7 +160,6 @@ def main(page: ft.Page):
 
             dashboard.visible = True
             dashboard.opacity = 1
-            # Micro-animation for hero card
             dashboard.controls[0].scale = 1.02
             page.update()
         except:
@@ -196,7 +194,7 @@ def main(page: ft.Page):
             horizontal_alignment="center",
         ),
         width=400,
-        padding=40, # Reduced sidebar padding
+        padding=40,
         bgcolor="#F1F5F9",
     )
 
@@ -207,7 +205,8 @@ def main(page: ft.Page):
                 ft.Container(
                     content=ft.Column([dashboard], expand=True, scroll="auto", alignment="start"),
                     expand=True,
-                    padding=40, # Reduced main area padding to move things up
+                    # REDUCED TOP PADDING TO MOVE IT UP
+                    padding=ft.padding.only(left=40, top=10, right=40, bottom=40),
                     bgcolor="#F8FAFC"
                 )
             ],
