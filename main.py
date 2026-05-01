@@ -1,128 +1,114 @@
 import customtkinter as ctk
 from tkinter import messagebox
 from datetime import date
-from PIL import Image, ImageTk
+from PIL import Image
 
-# --- Theme Setup ---
+# --- iOS Theme Configuration ---
 ctk.set_appearance_mode("Light")
 ctk.set_default_color_theme("blue")
 
-class AppleUltimateApp(ctk.CTk):
+class CleanAppleAgeApp(ctk.CTk):
     def __init__(self):
         super().__init__()
 
-        self.title("Age Pro - Apple Edition")
-        self.geometry("450x880")
+        self.title("Age Calculator")
+        self.geometry("400x820")
         self.resizable(False, False)
+        self.configure(fg_color="#F2F2F7") # iOS System Background
 
-        self.setup_background()
         self.setup_ui()
 
-    def setup_background(self):
-        try:
-            bg_img = Image.open("apple_bg.png")
-            self.bg_image = ctk.CTkImage(light_image=bg_img, dark_image=bg_img, size=(450, 880))
-            self.bg_label = ctk.CTkLabel(self, image=self.bg_image, text="")
-            self.bg_label.place(x=0, y=0, relwidth=1, relheight=1)
-        except:
-            self.configure(fg_color="#FBFBFD") # Apple White fallback
-
     def setup_ui(self):
-        # Main Scrollable / Stacked Frame
-        self.container = ctk.CTkFrame(self, fg_color="transparent")
-        self.container.pack(fill="both", expand=True, padx=25, pady=25)
+        # Header Section
+        self.header = ctk.CTkFrame(self, fg_color="transparent")
+        self.header.pack(pady=(50, 20), padx=30, fill="x")
 
-        # Hero Image (Evolution)
+        # ONLY using the provided Age.png
         try:
-            hero = Image.open("Age.png")
-            self.hero_photo = ctk.CTkImage(light_image=hero, dark_image=hero, size=(380, 100))
-            self.hero_label = ctk.CTkLabel(self.container, image=self.hero_photo, text="")
-            self.hero_label.pack(pady=(40, 5))
+            img = Image.open("Age.png")
+            # Quality resizing
+            w, h = img.size
+            new_w = 320
+            new_h = int(h * (new_w / w))
+            self.icon_image = ctk.CTkImage(light_image=img, dark_image=img, size=(new_w, new_h))
+            self.icon_label = ctk.CTkLabel(self.header, image=self.icon_image, text="")
+            self.icon_label.pack(pady=10)
         except: pass
 
-        # Title
-        self.title_label = ctk.CTkLabel(self.container, text="Age Pro", 
-                                       font=ctk.CTkFont(family="SF Pro Display", size=42, weight="bold"),
-                                       text_color="#1D1D1F") # Apple Dark Gray
+        self.title_label = ctk.CTkLabel(self.header, text="Age Calculator", 
+                                       font=ctk.CTkFont(family="SF Pro Display", size=34, weight="bold"),
+                                       text_color="#000000")
         self.title_label.pack()
         
-        self.subtitle = ctk.CTkLabel(self.container, text="The art of growing up.", 
-                                    font=ctk.CTkFont(family="SF Pro Text", size=17),
-                                    text_color="#86868B") # Apple Muted Gray
-        self.subtitle.pack(pady=(0, 40))
+        self.subtitle = ctk.CTkLabel(self.header, text="Clean. Simple. Accurate.", 
+                                    font=ctk.CTkFont(family="SF Pro Text", size=15),
+                                    text_color="#8E8E93")
+        self.subtitle.pack()
 
-        # Input Section (Apple Glass Card)
-        self.card = ctk.CTkFrame(self.container, corner_radius=28, 
-                                 fg_color="#FFFFFF", 
-                                 border_width=1, border_color="#E5E5E7")
-        self.card.pack(fill="x", pady=10)
+        # Input Card (iOS Form Style)
+        self.form_card = ctk.CTkFrame(self, fg_color="#FFFFFF", corner_radius=15, border_width=1, border_color="#E5E5EA")
+        self.form_card.pack(pady=20, padx=20, fill="x")
 
-        # Custom Styled Input
-        def add_ios_input(placeholder, pady=(0, 0)):
-            e = ctk.CTkEntry(self.card, placeholder_text=placeholder, 
-                             height=55, corner_radius=18, border_width=0,
-                             fg_color="#F5F5F7", text_color="#1D1D1F",
+        def add_ios_entry(placeholder, pady=(0, 0)):
+            e = ctk.CTkEntry(self.form_card, placeholder_text=placeholder, 
+                             height=50, corner_radius=10, border_width=0,
+                             fg_color="#F2F2F7", text_color="#000000",
                              font=ctk.CTkFont(family="SF Pro Text", size=15))
-            e.pack(pady=pady, padx=25, fill="x")
+            e.pack(pady=pady, padx=20, fill="x")
             return e
 
-        self.name_entry = add_ios_input("Your Name", pady=(30, 15))
+        self.name_entry = add_ios_entry("Name", pady=(25, 10))
         
-        # Date Grid
-        self.date_grid = ctk.CTkFrame(self.card, fg_color="transparent")
-        self.date_grid.pack(fill="x", padx=25, pady=(0, 30))
+        # Date Inputs
+        self.date_frame = ctk.CTkFrame(self.form_card, fg_color="transparent")
+        self.date_frame.pack(pady=(0, 25), padx=20, fill="x")
         
-        entry_cfg = {"height": 55, "corner_radius": 18, "border_width": 0, "fg_color": "#F5F5F7", "text_color": "#1D1D1F", "font": ("SF Pro Text", 14)}
+        style = {"height": 50, "corner_radius": 10, "border_width": 0, "fg_color": "#F2F2F7", "text_color": "#000000", "font": ("SF Pro Text", 14)}
         
-        self.year_e = ctk.CTkEntry(self.date_grid, placeholder_text="Year", width=100, **entry_cfg)
+        self.year_e = ctk.CTkEntry(self.date_frame, placeholder_text="Year", width=100, **style)
         self.year_e.pack(side="left", expand=True, padx=(0, 5))
         
-        self.month_e = ctk.CTkEntry(self.date_grid, placeholder_text="Mon", width=80, **entry_cfg)
+        self.month_e = ctk.CTkEntry(self.date_frame, placeholder_text="Mon", width=80, **style)
         self.month_e.pack(side="left", expand=True, padx=5)
         
-        self.day_e = ctk.CTkEntry(self.date_grid, placeholder_text="Day", width=80, **entry_cfg)
+        self.day_e = ctk.CTkEntry(self.date_frame, placeholder_text="Day", width=80, **style)
         self.day_e.pack(side="left", expand=True, padx=(5, 0))
 
-        # Main Button
-        self.action_btn = ctk.CTkButton(self.container, text="Generate Analytics", 
-                                        height=65, corner_radius=30, 
-                                        fg_color="#007AFF", hover_color="#0066CC",
-                                        font=ctk.CTkFont(family="SF Pro Display", size=18, weight="bold"),
-                                        command=self.calculate)
-        self.action_btn.pack(pady=25, fill="x")
+        # Action Button
+        self.calc_btn = ctk.CTkButton(self, text="Calculate", 
+                                      height=55, corner_radius=15, 
+                                      fg_color="#007AFF", hover_color="#0056D2",
+                                      font=ctk.CTkFont(family="SF Pro Display", size=18, weight="bold"),
+                                      command=self.calculate)
+        self.calc_btn.pack(pady=10, padx=20, fill="x")
 
         # Results Dashboard
-        self.dashboard = ctk.CTkFrame(self.container, fg_color="transparent")
+        self.results = ctk.CTkFrame(self, fg_color="transparent")
         
-        # Age Summary Card
-        self.summary_card = ctk.CTkFrame(self.dashboard, corner_radius=28, fg_color="#FFFFFF", 
-                                         border_width=1, border_color="#E5E5E7")
-        self.summary_card.pack(fill="x", pady=10)
+        self.age_card = ctk.CTkFrame(self.results, fg_color="#FFFFFF", corner_radius=20, border_width=1, border_color="#E5E5EA")
+        self.age_card.pack(fill="x", padx=20, pady=10)
 
-        self.res_name = ctk.CTkLabel(self.summary_card, text="", font=ctk.CTkFont(size=20, weight="bold"), text_color="#1D1D1F")
-        self.res_name.pack(pady=(25, 5))
+        self.res_name = ctk.CTkLabel(self.age_card, text="", font=ctk.CTkFont(size=18, weight="bold"), text_color="#000000")
+        self.res_name.pack(pady=(20, 5))
 
-        self.res_age = ctk.CTkLabel(self.summary_card, text="", font=ctk.CTkFont(size=54, weight="bold"), text_color="#007AFF")
-        self.res_age.pack()
+        self.res_age = ctk.CTkLabel(self.age_card, text="", font=ctk.CTkFont(size=48, weight="bold"), text_color="#007AFF")
+        self.res_age.pack(pady=(0, 20))
 
-        self.res_tag = ctk.CTkLabel(self.summary_card, text="", font=ctk.CTkFont(size=14), text_color="#86868B")
-        self.res_tag.pack(pady=(0, 25))
+        # Stats Grid
+        self.stats = ctk.CTkFrame(self.results, fg_color="transparent")
+        self.stats.pack(fill="x", padx=15)
+        self.stats.columnconfigure((0, 1), weight=1)
 
-        # Stats Row
-        self.stats_row = ctk.CTkFrame(self.dashboard, fg_color="transparent")
-        self.stats_row.pack(fill="x")
-        self.stats_row.columnconfigure((0, 1), weight=1)
+        self.st_zodiac = self.create_box(self.stats, "ZODIAC", 0, 0)
+        self.st_next = self.create_box(self.stats, "NEXT BIRTHDAY", 0, 1)
 
-        self.stat_zodiac = self.create_apple_stat(self.stats_row, "Zodiac", 0, 0)
-        self.stat_next = self.create_apple_stat(self.stats_row, "Birthday", 0, 1)
-
-    def create_apple_stat(self, parent, label, row, col):
-        f = ctk.CTkFrame(parent, corner_radius=20, fg_color="#FFFFFF", border_width=1, border_color="#E5E5E7", height=90)
-        f.grid(row=row, column=col, padx=5, pady=5, sticky="ew")
-        ctk.CTkLabel(f, text=label, font=ctk.CTkFont(size=11, weight="bold"), text_color="#86868B").pack(pady=(15, 0))
-        val = ctk.CTkLabel(f, text="", font=ctk.CTkFont(size=15, weight="bold"), text_color="#1D1D1F")
-        val.pack(pady=(0, 15))
-        return val
+    def create_box(self, parent, label, row, col):
+        b = ctk.CTkFrame(parent, fg_color="#FFFFFF", corner_radius=15, border_width=1, border_color="#E5E5EA")
+        b.grid(row=row, column=col, padx=5, pady=5, sticky="ew")
+        ctk.CTkLabel(b, text=label, font=ctk.CTkFont(size=10, weight="bold"), text_color="#8E8E93").pack(pady=(12, 0))
+        v = ctk.CTkLabel(b, text="", font=ctk.CTkFont(size=16, weight="bold"), text_color="#000000")
+        v.pack(pady=(0, 12))
+        return v
 
     def calculate(self):
         try:
@@ -131,7 +117,7 @@ class AppleUltimateApp(ctk.CTk):
             birth = date(y, m, d)
             today = date.today()
 
-            age_years = today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
+            age = today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
             
             # Next Bday
             next_b = date(today.year, m, d)
@@ -147,15 +133,14 @@ class AppleUltimateApp(ctk.CTk):
                     break
 
             self.res_name.configure(text=f"Welcome, {name}")
-            self.res_age.configure(text=f"{age_years}")
-            self.res_tag.configure(text=f"Years of experiences")
-            self.stat_zodiac.configure(text=sign)
-            self.stat_next.configure(text=f"{days_to} Days Left")
+            self.res_age.configure(text=f"{age} Years")
+            self.st_zodiac.configure(text=sign)
+            self.st_next.configure(text=f"{days_to} Days")
 
-            self.dashboard.pack(fill="x", expand=True)
-        except Exception as e:
-            messagebox.showerror("Error", "Invalid date format")
+            self.results.pack(fill="x", expand=True)
+        except:
+            messagebox.showerror("Error", "Invalid Input")
 
 if __name__ == "__main__":
-    app = AppleUltimateApp()
+    app = CleanAppleAgeApp()
     app.mainloop()
