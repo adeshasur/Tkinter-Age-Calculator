@@ -77,8 +77,8 @@ def main(page: ft.Page):
 
     # --- Right Panel: Results Area ---
     
-    res_age = ft.Text("0", size=180, weight="bold", color=TEXT_MAIN)
-    res_name = ft.Text("Analytics Ready", size=32, weight="bold", color=TEXT_MAIN)
+    res_age = ft.Text("0", size=140, weight="bold", color=TEXT_MAIN)
+    res_name = ft.Text("Analytics Ready", size=28, weight="bold", color=TEXT_MAIN)
     
     # Custom Modern Progress Bar
     progress_fill = ft.Container(
@@ -194,11 +194,11 @@ def main(page: ft.Page):
             life_text,
             progress_track
         ], horizontal_alignment="center", spacing=0),
-        padding=60,
-        border_radius=40,
+        padding=ft.padding.all(40),
+        border_radius=32,
         bgcolor="#FFFFFF",
-        shadow=ft.BoxShadow(blur_radius=50, color=ft.Colors.with_opacity(0.06, ft.Colors.BLACK), offset=ft.Offset(0, 20)),
-        margin=ft.margin.only(bottom=50)
+        shadow=ft.BoxShadow(blur_radius=40, color=ft.Colors.with_opacity(0.04, ft.Colors.BLACK), offset=ft.Offset(0, 15)),
+        margin=ft.margin.only(bottom=30)
     )
 
     results_container = ft.Column([
