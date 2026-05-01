@@ -73,8 +73,9 @@ def main(page: ft.Page):
 
     res_age = ft.Text("0", size=100, weight="bold", color="#007AFF")
     res_name = ft.Text("", size=24, weight="bold", color="#1E293B")
-    life_progress = ft.ProgressBar(width=350, color="#007AFF", bgcolor="#E2E8F0", height=6, border_radius=5)
-    progress_text = ft.Text("Journey Progress: 0%", size=12, color="#64748B")
+    # ENLARGED PROGRESS BAR
+    life_progress = ft.ProgressBar(width=500, color="#007AFF", bgcolor="#E2E8F0", height=12, border_radius=10)
+    progress_text = ft.Text("Life Journey Progress: 0%", size=14, color="#64748B", weight="w500")
     
     card_zodiac = StatCard("Zodiac", ft.Icons.STARS)
     card_days = StatCard("Days", ft.Icons.CALENDAR_MONTH)
@@ -145,7 +146,7 @@ def main(page: ft.Page):
             res_name.value = f"Greetings, {name}"
             res_age.value = str(age)
             life_progress.value = perc
-            progress_text.value = f"Journey Progress: {int(perc*100)}% (Based on 80yr avg)"
+            progress_text.value = f"Life Journey Progress: {int(perc*100)}% (Based on 80yr avg)"
             
             card_zodiac.value_label.value = get_zodiac(m, d)
             card_days.value_label.value = f"{diff.days:,}"
@@ -208,7 +209,7 @@ def main(page: ft.Page):
                 ft.Container(
                     content=ft.Column([dashboard], scroll="auto", alignment=ft.MainAxisAlignment.START),
                     expand=True,
-                    padding=ft.Padding(40, 0, 40, 40), # Standard Padding syntax
+                    padding=ft.Padding(40, 0, 40, 40),
                     bgcolor="#F8FAFC"
                 )
             ],
