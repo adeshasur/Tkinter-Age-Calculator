@@ -59,7 +59,7 @@ def main(page: ft.Page):
     card_zodiac = StatCard("Zodiac Sign", ft.Icons.STARS)
     card_days = StatCard("Days Lived", ft.Icons.CALENDAR_MONTH)
     card_hearts = StatCard("Est. Heartbeats", ft.Icons.FAVORITE)
-    card_weeks = StatCard("Weeks Lived", ft.Icons.WEEKS)
+    card_weeks = StatCard("Weeks Lived", ft.Icons.CALENDAR_VIEW_WEEK)
     card_sleep = StatCard("Years Asleep", ft.Icons.BEDTIME)
     card_next = StatCard("Next Birthday", ft.Icons.CAKE)
 
