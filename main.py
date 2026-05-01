@@ -132,7 +132,10 @@ def main(page: ft.Page):
 
     left_panel = ft.Container(
         content=ft.Column([
-            ft.Row([ft.Image(src="Age.png", height=35), ft.Text("AgePro", size=22, weight="bold", color=TEXT_MAIN)], spacing=10, alignment="center"),
+            ft.Column([
+                ft.Text("AgePro", size=28, weight="bold", color=TEXT_MAIN),
+                ft.Image(src="Age.png", height=45, fit="contain"),
+            ], horizontal_alignment="center", spacing=5),
             ft.Container(height=40),
             ft.Text("USER INFORMATION", size=10, weight="bold", color=TEXT_SECONDARY),
             name_input,
