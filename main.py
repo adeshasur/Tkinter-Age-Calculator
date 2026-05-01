@@ -106,7 +106,7 @@ def main(page: ft.Page):
         content=ft.Column([
             res_name, 
             res_age, 
-            ft.Text("YEARS OLD", size=14, weight="bold", color="#94A3B8", letter_spacing=2),
+            ft.Text("YEARS OLD", size=14, weight="bold", color="#94A3B8"),
             ft.Container(height=30),
             progress_text,
             life_progress
@@ -173,15 +173,15 @@ def main(page: ft.Page):
                     content=ft.Column([
                         ft.Image(src="Age.png", height=70, fit="contain"),
                         ft.Text("AgePro", size=24, weight="bold", color=ft.Colors.WHITE),
-                        ft.Text("ELITE ANALYTICS ENGINE", size=9, color=ACCENT, weight="bold", letter_spacing=1),
+                        ft.Text("ELITE ANALYTICS ENGINE", size=9, color=ACCENT, weight="bold"),
                     ], horizontal_alignment="start", spacing=5),
                     margin=ft.margin.only(bottom=40)
                 ),
                 
-                ft.Text("PROFILE SETTINGS", size=10, weight="bold", color="#6B7280", letter_spacing=1),
+                ft.Text("PROFILE SETTINGS", size=10, weight="bold", color="#6B7280"),
                 name_input,
                 ft.Container(height=10),
-                ft.Text("BIRTH DATE", size=10, weight="bold", color="#6B7280", letter_spacing=1),
+                ft.Text("BIRTH DATE", size=10, weight="bold", color="#6B7280"),
                 ft.Row([year_input, month_input, day_input], spacing=8),
                 
                 ft.Container(height=40),
