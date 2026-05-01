@@ -89,8 +89,8 @@ def main(page: ft.Page):
                 padding=60,
                 border_radius=40,
                 gradient=ft.LinearGradient(
-                    begin=ft.alignment.TOP_LEFT,
-                    end=ft.alignment.BOTTOM_RIGHT,
+                    begin=ft.Alignment(-1, -1),
+                    end=ft.Alignment(1, 1),
                     colors=[ft.Colors.with_opacity(0.1, ft.Colors.CYAN_700), ft.Colors.with_opacity(0.02, ft.Colors.BLACK)]
                 ),
                 border=ft.Border(
