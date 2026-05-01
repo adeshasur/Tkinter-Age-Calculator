@@ -1,14 +1,13 @@
 import flet as ft
 from datetime import datetime, date
 
-# --- Design Language ---
+# --- Global Style Config ---
 ACCENT = "#007AFF"
-SIDEBAR_BG = "#1A1C1E"
-MAIN_BG = "#F5F7FA"
-CARD_BG = "#FFFFFF"
-TEXT_HEADING = "#111827"
-TEXT_BODY = "#4B5563"
-BORDER_COLOR = "#E5E7EB"
+BG_WHITE = "#FFFFFF"
+BG_SUBTLE = "#FBFBFC"
+TEXT_MAIN = "#1D1D1F" # Apple Charcoal
+TEXT_SECONDARY = "#86868B" # Apple Gray
+BORDER_SOFT = "#F2F2F7"
 
 # --- Logic ---
 
@@ -21,116 +20,66 @@ def get_zodiac(month, day):
     except: pass
     return "Unknown"
 
-# --- UI Components ---
+# --- Reusable Components ---
 
-class StatCard(ft.Container):
-    def __init__(self, title, icon, value_text=""):
+class DashboardTile(ft.Container):
+    def __init__(self, title, icon, value_text="--"):
         super().__init__()
-        self.value_label = ft.Text(value_text, size=24, weight="bold", color=TEXT_HEADING)
+        self.value_label = ft.Text(value_text, size=22, weight="bold", color=TEXT_MAIN)
         self.content = ft.Column(
             [
-                ft.Row([ft.Icon(icon, color=ACCENT, size=16), ft.Text(title, size=12, color=TEXT_BODY, weight="w500")], spacing=8),
+                ft.Row([ft.Icon(icon, color=ACCENT, size=14), ft.Text(title, size=11, color=TEXT_SECONDARY, weight="w500")], spacing=6),
                 self.value_label,
             ],
-            spacing=8,
+            spacing=4,
         )
-        self.padding = 24
-        self.border_radius = 16
-        self.bgcolor = CARD_BG
-        self.shadow = ft.BoxShadow(spread_radius=0, blur_radius=15, color=ft.Colors.with_opacity(0.04, ft.Colors.BLACK), offset=ft.Offset(0, 4))
-        self.border = ft.border.all(1, BORDER_COLOR)
-        self.animate_scale = ft.Animation(400, ft.AnimationCurve.EASE_OUT_BACK)
-        self.on_hover = lambda e: self.toggle_hover(e)
+        self.padding = 20
+        self.border_radius = 12
+        self.bgcolor = BG_WHITE
+        self.border = ft.border.all(1, BORDER_SOFT)
+        self.shadow = ft.BoxShadow(spread_radius=0, blur_radius=10, color=ft.Colors.with_opacity(0.02, ft.Colors.BLACK), offset=ft.Offset(0, 4))
+        self.animate_scale = ft.Animation(300, ft.AnimationCurve.EASE_OUT)
         self.expand = True
 
-    def toggle_hover(self, e):
-        self.scale = 1.04 if e.data == "true" else 1.0
-        self.border = ft.border.all(1, ACCENT if e.data == "true" else BORDER_COLOR)
-        self.update()
-
 def main(page: ft.Page):
-    page.title = "Age Pro - Elite Design"
-    page.window_width = 1300
-    page.window_height = 950
-    page.bgcolor = MAIN_BG
+    page.title = "AgePro Elite"
+    page.bgcolor = BG_WHITE
     page.padding = 0
+    page.window_width = 1200
+    page.window_height = 900
     page.fonts = {"Outfit": "https://github.com/google/fonts/raw/main/ofl/outfit/Outfit-VariableFont_wght.ttf"}
     page.theme = ft.Theme(font_family="Outfit")
 
-    # --- Sidebar Inputs ---
+    # --- UI State Controllers ---
     
-    input_style = {
-        "border_radius": 10,
-        "border_color": "#374151",
-        "focused_border_color": ACCENT,
-        "bgcolor": "#2D2F36",
-        "color": ft.Colors.WHITE,
-        "label_style": ft.TextStyle(color="#9CA3AF", size=12),
-        "height": 48,
-        "content_padding": 12,
-    }
+    name_input = ft.TextField(label="Full Name", border="underline", border_color=BORDER_SOFT, focused_border_color=ACCENT, text_size=14)
+    year_input = ft.TextField(label="Year", width=80, border="underline", border_color=BORDER_SOFT, focused_border_color=ACCENT)
+    month_input = ft.TextField(label="Month", width=70, border="underline", border_color=BORDER_SOFT, focused_border_color=ACCENT)
+    day_input = ft.TextField(label="Day", width=60, border="underline", border_color=BORDER_SOFT, focused_border_color=ACCENT)
 
-    name_input = ft.TextField(label="Full Name", **input_style)
-    year_input = ft.TextField(label="Year", width=100, **input_style)
-    month_input = ft.TextField(label="Month", width=80, **input_style)
-    day_input = ft.TextField(label="Day", width=70, **input_style)
+    res_age = ft.Text("0", size=140, weight="bold", color=ACCENT)
+    res_name = ft.Text("Ready to Analyze", size=24, weight="w500", color=TEXT_MAIN)
+    life_bar = ft.ProgressBar(width=400, height=8, color=ACCENT, bgcolor=BORDER_SOFT, border_radius=4)
+    life_text = ft.Text("Journey Progress: --%", size=12, color=TEXT_SECONDARY)
 
-    # --- Dashboard Elements ---
+    tiles = [
+        DashboardTile("Zodiac Sign", ft.Icons.STARS),
+        DashboardTile("Next Birthday", ft.Icons.CAKE),
+        DashboardTile("Days Lived", ft.Icons.CALENDAR_TODAY),
+        DashboardTile("Total Weeks", ft.Icons.CALENDAR_VIEW_WEEK),
+        DashboardTile("Heartbeats", ft.Icons.FAVORITE),
+        DashboardTile("Years of Sleep", ft.Icons.BEDTIME)
+    ]
+
+    # --- Action Logic ---
     
-    res_age = ft.Text("0", size=120, weight="bold", color=ACCENT)
-    res_name = ft.Text("Ready to Analyze", size=28, weight="bold", color=TEXT_HEADING)
-    life_progress = ft.ProgressBar(width=600, color=ACCENT, bgcolor="#E5E7EB", height=10, border_radius=5, value=0)
-    progress_text = ft.Text("Journey Progress: --%", size=14, color=TEXT_BODY, weight="w500")
-    
-    card_zodiac = StatCard("Zodiac Sign", ft.Icons.STARS)
-    card_next = StatCard("Next Birthday", ft.Icons.CAKE)
-    card_days = StatCard("Total Days", ft.Icons.CALENDAR_MONTH)
-    card_weeks = StatCard("Total Weeks", ft.Icons.CALENDAR_VIEW_WEEK)
-    card_hearts = StatCard("Heartbeats", ft.Icons.FAVORITE)
-    card_dreams = StatCard("Sleep & Dreams", ft.Icons.BEDTIME)
-
-    grid = ft.ResponsiveRow([
-        ft.Column([card_zodiac], col={"sm": 6, "md": 4}),
-        ft.Column([card_next], col={"sm": 6, "md": 4}),
-        ft.Column([card_days], col={"sm": 6, "md": 4}),
-        ft.Column([card_weeks], col={"sm": 6, "md": 4}),
-        ft.Column([card_hearts], col={"sm": 6, "md": 4}),
-        ft.Column([card_dreams], col={"sm": 6, "md": 4}),
-    ], spacing=24, run_spacing=24)
-
-    hero_card = ft.Container(
-        content=ft.Column([res_name, res_age, ft.Text("YEARS OLD", size=14, weight="bold", color="#94A3B8"), ft.Container(height=30), progress_text, life_progress], horizontal_alignment="center", spacing=0),
-        padding=60, border_radius=32, bgcolor=CARD_BG, border=ft.border.all(1, BORDER_COLOR), margin=ft.margin.only(bottom=40)
-    )
-
-    dashboard = ft.Column([hero_card, grid], scroll="auto", alignment=ft.MainAxisAlignment.START, opacity=1)
-
-    # Simplified Action Button
-    run_btn = ft.ElevatedButton(
-        content=ft.Text("RUN ANALYSIS", weight="bold"),
-        icon=ft.Icons.AUTO_GRAPH,
-        height=52,
-        width=float("inf"),
-        on_click=lambda e: calculate_click(e),
-        style=ft.ButtonStyle(
-            shape=ft.RoundedRectangleBorder(radius=10),
-            color=ft.Colors.WHITE,
-            bgcolor=ACCENT
-        )
-    )
-
     def calculate_click(e):
         try:
-            # Feedback
-            run_btn.content = ft.Text("ANALYZING...", weight="bold")
-            run_btn.disabled = True
+            btn.content = ft.Text("ANALYZING...", weight="bold")
             page.update()
 
             name = name_input.value or "Explorer"
-            y = int(year_input.value)
-            m = int(month_input.value)
-            d = int(day_input.value)
-            
+            y, m, d = int(year_input.value), int(month_input.value), int(day_input.value)
             birth = datetime(y, m, d)
             today = datetime.now()
             
@@ -138,55 +87,106 @@ def main(page: ft.Page):
             diff = today - birth
             perc = min(1.0, age / 80)
             
-            res_name.value = f"Greetings, {name}"
+            res_name.value = f"Hi, {name}"
             res_age.value = str(age)
-            life_progress.value = perc
-            progress_text.value = f"Life Journey Progress: {int(perc*100)}% (Based on 80yr avg)"
+            life_bar.value = perc
+            life_text.value = f"Life Journey Progress: {int(perc*100)}%"
             
-            card_zodiac.value_label.value = get_zodiac(m, d)
-            # Safe Next Birthday Calculation
+            tiles[0].value_label.value = get_zodiac(m, d)
             try:
                 nb = date(today.year, m, d)
                 if nb < today.date(): nb = date(today.year + 1, m, d)
-            except: nb = date(today.year + 1, 3, 1) # Leap year fallback
+            except: nb = date(today.year + 1, 3, 1)
             
-            card_next.value_label.value = f"{(nb - today.date()).days} Days"
-            card_days.value_label.value = f"{diff.days:,}"
-            card_weeks.value_label.value = f"{diff.days // 7:,}"
-            card_hearts.value_label.value = f"{diff.days * 24 * 60 * 72:,}"
-            card_dreams.value_label.value = f"{int(age * 0.33)} Yrs"
+            tiles[1].value_label.value = f"{(nb - today.date()).days} Days"
+            tiles[2].value_label.value = f"{diff.days:,}"
+            tiles[3].value_label.value = f"{diff.days // 7:,}"
+            tiles[4].value_label.value = f"{diff.days * 24 * 60 * 72:,}"
+            tiles[5].value_label.value = f"{int(age * 0.33)} Yrs"
 
-            run_btn.content = ft.Text("RUN ANALYSIS", weight="bold")
-            run_btn.disabled = False
+            results_area.visible = True
+            btn.content = ft.Text("RUN ANALYSIS", weight="bold")
             page.update()
-        except Exception as ex:
-            print(f"Error: {ex}")
-            run_btn.content = ft.Text("RUN ANALYSIS", weight="bold")
-            run_btn.disabled = False
-            page.snack_bar = ft.SnackBar(ft.Text("Error: Please check the date!"))
+        except:
+            btn.content = ft.Text("RUN ANALYSIS", weight="bold")
+            page.snack_bar = ft.SnackBar(ft.Text("Invalid birth date!"))
             page.snack_bar.open = True
             page.update()
 
-    # --- Layout ---
-    sidebar = ft.Container(
-        content=ft.Column([
-            ft.Container(content=ft.Column([ft.Image(src="Age.png", height=70), ft.Text("AgePro", size=24, weight="bold", color="white")], spacing=5), margin=ft.margin.only(bottom=40)),
-            ft.Text("USER DETAILS", size=10, color="#6B7280"),
-            name_input,
-            ft.Text("BIRTH DATE", size=10, color="#6B7280"),
-            ft.Row([year_input, month_input, day_input], spacing=8),
-            ft.Container(height=40),
-            run_btn,
-            ft.Container(expand=True),
-            ft.Text("Privacy Shield Active", size=10, color="#4B5563")
-        ], spacing=12),
-        width=300, padding=40, bgcolor=SIDEBAR_BG
+    btn = ft.ElevatedButton(
+        content=ft.Text("RUN ANALYSIS", weight="bold"),
+        on_click=calculate_click,
+        height=50,
+        width=250,
+        style=ft.ButtonStyle(bgcolor=ACCENT, color="white", shape=ft.RoundedRectangleBorder(radius=10))
     )
 
-    page.add(ft.Row([
-        sidebar,
-        ft.Container(content=ft.Column([dashboard], horizontal_alignment="center"), expand=True, padding=ft.Padding(60, 40, 60, 60), bgcolor=MAIN_BG)
-    ], expand=True, spacing=0))
+    # --- Composition ---
+
+    header = ft.Container(
+        content=ft.Row([
+            ft.Row([ft.Image(src="Age.png", height=30), ft.Text("AgePro", size=20, weight="bold", color=TEXT_MAIN)], spacing=10),
+            ft.Text("v2.0 Elite Edition", size=10, color=TEXT_SECONDARY)
+        ], alignment="spaceBetween"),
+        padding=ft.padding.only(left=60, right=60, top=30, bottom=30),
+        border=ft.border.only(bottom=ft.BorderSide(1, BORDER_SOFT))
+    )
+
+    input_card = ft.Container(
+        content=ft.Column([
+            ft.Text("Calculate your life metrics with precision.", size=14, color=TEXT_SECONDARY),
+            ft.Container(height=10),
+            name_input,
+            ft.Row([year_input, month_input, day_input], spacing=20),
+            ft.Container(height=20),
+            btn
+        ], horizontal_alignment="center", spacing=15),
+        padding=40,
+        bgcolor=BG_WHITE,
+        border_radius=24,
+        border=ft.border.all(1, BORDER_SOFT),
+        shadow=ft.BoxShadow(blur_radius=40, color=ft.Colors.with_opacity(0.04, ft.Colors.BLACK)),
+        width=500
+    )
+
+    results_area = ft.Column([
+        ft.Container(
+            content=ft.Column([
+                res_name,
+                res_age,
+                ft.Text("YEARS OLD", size=14, weight="bold", color=TEXT_SECONDARY),
+                ft.Container(height=30),
+                life_text,
+                life_bar
+            ], horizontal_alignment="center", spacing=0),
+            padding=40,
+            margin=ft.margin.only(top=40)
+        ),
+        ft.ResponsiveRow([
+            ft.Column([tiles[0]], col={"sm": 6, "md": 4}),
+            ft.Column([tiles[1]], col={"sm": 6, "md": 4}),
+            ft.Column([tiles[2]], col={"sm": 6, "md": 4}),
+            ft.Column([tiles[3]], col={"sm": 6, "md": 4}),
+            ft.Column([tiles[4]], col={"sm": 6, "md": 4}),
+            ft.Column([tiles[5]], col={"sm": 6, "md": 4}),
+        ], spacing=20, run_spacing=20, width=900)
+    ], visible=False, horizontal_alignment="center")
+
+    page.add(
+        ft.Column([
+            header,
+            ft.Container(
+                content=ft.Column([
+                    ft.Container(height=40),
+                    input_card,
+                    results_area,
+                    ft.Container(height=100)
+                ], horizontal_alignment="center", scroll="auto"),
+                expand=True,
+                bgcolor=BG_SUBTLE
+            )
+        ], expand=True, spacing=0)
+    )
 
 if __name__ == "__main__":
-    ft.app(target=main)
+    ft.run(main)
