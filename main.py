@@ -132,7 +132,7 @@ def main(page: ft.Page):
 
     left_panel = ft.Container(
         content=ft.Column([
-            ft.Row([ft.Image(src="Age.png", height=35), ft.Text("AgePro", size=22, weight="bold", color=TEXT_MAIN)], spacing=10),
+            ft.Row([ft.Image(src="Age.png", height=35), ft.Text("AgePro", size=22, weight="bold", color=TEXT_MAIN)], spacing=10, alignment="center"),
             ft.Container(height=40),
             ft.Text("USER INFORMATION", size=10, weight="bold", color=TEXT_SECONDARY),
             name_input,
@@ -148,7 +148,7 @@ def main(page: ft.Page):
                 style=ft.ButtonStyle(bgcolor=ACCENT, color="white", shape=ft.RoundedRectangleBorder(radius=8))
             ),
             ft.Container(expand=True),
-            ft.Text("Developed by Tunix Elite", size=10, color=TEXT_SECONDARY)
+            ft.Row([ft.Text("Developed by Adheesha Sooriyaarachchi", size=10, color=TEXT_SECONDARY)], alignment="center")
         ], spacing=10),
         width=400,
         padding=50,
