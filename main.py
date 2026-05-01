@@ -1,6 +1,7 @@
-from tkinter import *
-from datetime import date, datetime, timedelta
-from tkinter import messagebox
+import tkinter as tk
+from tkinter import ttk, messagebox
+from datetime import date, timedelta
+from PIL import Image, ImageTk
 
 # --- Logic Functions ---
 
@@ -20,216 +21,170 @@ def get_zodiac(month, day):
 def calculate_age():
     name = name_entry.get().strip()
     if not name:
-        messagebox.showerror("Input Error", "Please enter your name")
+        messagebox.showerror("Error", "Please enter your name")
         return
 
     try:
-        birth_year = int(year_entry.get())
-        birth_month = int(month_entry.get())
-        birth_day = int(day_entry.get())
-
-        if not (1 <= birth_month <= 12):
-            messagebox.showerror("Invalid Month", "Month should be between 1 and 12")
-            return
-        if not (1 <= birth_day <= 31):
-            messagebox.showerror("Invalid Day", "Day should be between 1 and 31")
-            return
+        b_year = int(year_entry.get())
+        b_month = int(month_entry.get())
+        b_day = int(day_entry.get())
 
         today = date.today()
-        try:
-            birth_date = date(birth_year, birth_month, birth_day)
-            if birth_date > today:
-                messagebox.showerror("Invalid Date", "Birth date cannot be in the future!")
-                return
-        except ValueError as e:
-            messagebox.showerror("Invalid Date", str(e))
+        birth_date = date(b_year, b_month, b_day)
+        
+        if birth_date > today:
+            messagebox.showerror("Error", "Birth date cannot be in the future")
             return
 
-        # Basic Age
+        # Age Calculation
         age_years = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
         
-        # Months and Days
-        months = (today.year - birth_date.year) * 12 + today.month - birth_date.month
-        if today.day < birth_date.day:
-            months -= 1
-            # Calculate days in previous month
-            prev_month = today.month - 1 if today.month > 1 else 12
-            prev_year = today.year if today.month > 1 else today.year - 1
-            days_in_prev = (date(today.year, today.month, 1) - timedelta(days=1)).day
-            days = days_in_prev - birth_date.day + today.day
-        else:
-            days = today.day - birth_date.day
-        months %= 12
-
         # Next Birthday
-        next_bday = date(today.year, birth_month, birth_day)
+        next_bday = date(today.year, b_month, b_day)
         if next_bday < today:
-            next_bday = date(today.year + 1, birth_month, birth_day)
+            next_bday = date(today.year + 1, b_month, b_day)
         days_to_bday = (next_bday - today).days
 
-        # Detailed Stats
+        # Stats
         delta = today - birth_date
         total_days = delta.days
-        total_hours = total_days * 24
-        total_minutes = total_hours * 60
-        total_seconds = total_minutes * 60
+        heartbeats = total_days * 24 * 60 * 72 # 72 bpm
         
-        # Fun Stats (Estimates)
-        heartbeats = total_minutes * 72 # Avg 72 bpm
-        breaths = total_minutes * 16    # Avg 16 bpm
-
-        # Update UI Variables
-        result_var.set(f"Hello, {name}!")
-        zodiac_var.set(f"Zodiac: {get_zodiac(birth_month, birth_day)}")
-        age_var.set(f"{age_years} Years, {months} Months, {days} Days")
+        # Update UI
+        result_name.config(text=f"Hello, {name}!")
+        result_age.config(text=f"{age_years} Years Old")
+        result_zodiac.config(text=f"Zodiac: {get_zodiac(b_month, b_day)}")
         
         if days_to_bday == 0:
-            next_bday_var.set("🎉 HAPPY BIRTHDAY! 🎉")
+            result_countdown.config(text="🎉 It's your Birthday! 🎉", fg="#e11d48")
         else:
-            next_bday_var.set(f"Next Birthday in: {days_to_bday} Days")
+            result_countdown.config(text=f"Next birthday in {days_to_bday} days")
 
-        days_var.set(f"{total_days:,} Days")
-        hours_var.set(f"{total_hours:,} Hours")
-        heart_var.set(f"{heartbeats:,} Heartbeats")
-        breath_var.set(f"{breaths:,} Breaths")
+        stat_days.config(text=f"{total_days:,}")
+        stat_hearts.config(text=f"{heartbeats:,}")
 
-        # Show result frame
-        result_frame.pack(pady=20, fill="x", padx=25)
+        # Reveal results
+        result_container.pack(pady=20, fill="x", padx=30)
         
     except ValueError:
-        messagebox.showerror("Input Error", "Enter valid numbers for date fields")
+        messagebox.showerror("Input Error", "Please enter valid numeric date values")
 
-def reset_entries():
-    name_entry.delete(0, END)
-    year_entry.delete(0, END)
-    month_entry.delete(0, END)
-    day_entry.delete(0, END)
-    result_frame.pack_forget()
+def reset():
+    name_entry.delete(0, tk.END)
+    year_entry.delete(0, tk.END)
+    month_entry.delete(0, tk.END)
+    day_entry.delete(0, tk.END)
+    result_container.pack_forget()
     name_entry.focus()
 
 # --- UI Setup ---
 
-root = Tk()
-root.title("Premium Age Pro")
+root = tk.Tk()
+root.title("Age Pro - Modern Analytics")
+root.geometry("500x950")
+root.configure(bg="#f8fafc") # Clean Slate BG
 
-# Window Geometry
-window_width, window_height = 500, 920
-screen_width = root.winfo_screenwidth()
-screen_height = root.winfo_screenheight()
-x = (screen_width - window_width) // 2
-y = (screen_height - window_height) // 2
-root.geometry(f"{window_width}x{window_height}+{x}+{y}")
-root.resizable(False, False)
+# Styles
+style = ttk.Style()
+style.theme_use('clam')
+style.configure("TEntry", fieldbackground="#ffffff", borderwidth=0)
 
-# Modern Dark Theme Palette
-bg_dark = "#0f172a"        # Deep Slate
-card_bg = "#1e293b"        # Lighter Slate
-accent_blue = "#38bdf8"    # Sky Blue
-accent_cyan = "#22d3ee"    # Cyan
-text_main = "#f8fafc"      # Near White
-text_dim = "#94a3b8"       # Muted Slate
-btn_primary = "#0284c7"    # Ocean Blue
-btn_hover = "#0369a1"      # Darker Ocean
+# Colors
+accent = "#2563eb"     # Electric Blue
+text_dark = "#1e293b"  # Deep Slate
+text_light = "#64748b" # Muted Blue
 
-root.configure(bg=bg_dark)
+# Header & Image
+header_frame = tk.Frame(root, bg="#f8fafc")
+header_frame.pack(pady=(40, 10))
 
-# --- Components ---
+try:
+    img_orig = Image.open("Age.png")
+    # Resize keeping aspect ratio
+    w, h = img_orig.size
+    new_w = 350
+    new_h = int(h * (new_w / w))
+    img_res = img_orig.resize((new_w, new_h), Image.Resampling.LANCZOS)
+    photo = ImageTk.PhotoImage(img_res)
+    img_label = tk.Label(header_frame, image=photo, bg="#f8fafc")
+    img_label.image = photo
+    img_label.pack()
+except Exception as e:
+    print(f"Image error: {e}")
 
-def on_enter(e):
-    e.widget['background'] = btn_hover
-
-def on_leave(e):
-    if "Reset" in e.widget['text']:
-        e.widget['background'] = "#ef4444"
-    else:
-        e.widget['background'] = btn_primary
-
-# Variables
-result_var = StringVar()
-zodiac_var = StringVar()
-age_var = StringVar()
-next_bday_var = StringVar()
-days_var = StringVar()
-hours_var = StringVar()
-heart_var = StringVar()
-breath_var = StringVar()
-
-# Header
-header_frame = Frame(root, bg=bg_dark)
-header_frame.pack(pady=(30, 10))
-
-Label(header_frame, text="AGE CALCULATOR", font=("Segoe UI", 28, "bold"), 
-      fg=accent_blue, bg=bg_dark).pack()
-Label(header_frame, text="Advanced Life Analytics & Insights", font=("Segoe UI", 11), 
-      fg=text_dim, bg=bg_dark).pack()
+tk.Label(header_frame, text="AGE CALCULATOR", font=("Inter", 24, "bold"), 
+         fg=accent, bg="#f8fafc").pack(pady=(10, 0))
+tk.Label(header_frame, text="Discover your life progress and insights", font=("Inter", 10), 
+         fg=text_light, bg="#f8fafc").pack()
 
 # Input Card
-input_card = Frame(root, bg=card_bg, padx=25, pady=25, highlightthickness=1, highlightbackground="#334155")
-input_card.pack(pady=10, padx=25, fill="x")
+input_card = tk.Frame(root, bg="#ffffff", highlightthickness=1, highlightbackground="#e2e8f0", padx=30, pady=30)
+input_card.pack(pady=20, padx=30, fill="x")
 
-def create_input_row(label, row):
-    Label(input_card, text=label, font=("Segoe UI", 10, "bold"), 
-          fg=text_dim, bg=card_bg).grid(row=row, column=0, sticky="w", pady=10)
-    entry = Entry(input_card, font=("Segoe UI", 12), bg="#0f172a", fg="white", 
-                  insertbackground="white", bd=0, highlightthickness=1, highlightbackground="#475569")
-    entry.grid(row=row, column=1, sticky="ew", padx=(15, 0), ipady=5)
-    return entry
+def add_label(text, row):
+    tk.Label(input_card, text=text, font=("Inter", 9, "bold"), 
+             fg=text_light, bg="#ffffff").grid(row=row, column=0, sticky="w", pady=(10, 2))
 
-input_card.columnconfigure(1, weight=1)
-name_entry = create_input_row("NAME", 0)
-year_entry = create_input_row("BIRTH YEAR", 1)
-month_entry = create_input_row("MONTH (1-12)", 2)
-day_entry = create_input_row("DAY (1-31)", 3)
+add_label("FULL NAME", 0)
+name_entry = tk.Entry(input_card, font=("Inter", 12), bg="#f1f5f9", fg=text_dark, bd=0, insertbackground=accent)
+name_entry.grid(row=1, column=0, sticky="ew", ipady=8)
+
+# Date Grid
+date_grid = tk.Frame(input_card, bg="#ffffff")
+date_grid.grid(row=2, column=0, sticky="ew", pady=(15, 0))
+date_grid.columnconfigure((0,1,2), weight=1)
+
+tk.Label(date_grid, text="YEAR", font=("Inter", 8, "bold"), fg=text_light, bg="#ffffff").grid(row=0, column=0, sticky="w")
+year_entry = tk.Entry(date_grid, font=("Inter", 11), bg="#f1f5f9", fg=text_dark, bd=0, justify="center")
+year_entry.grid(row=1, column=0, sticky="ew", padx=(0, 5), ipady=8)
+
+tk.Label(date_grid, text="MONTH", font=("Inter", 8, "bold"), fg=text_light, bg="#ffffff").grid(row=0, column=1, sticky="w")
+month_entry = tk.Entry(date_grid, font=("Inter", 11), bg="#f1f5f9", fg=text_dark, bd=0, justify="center")
+month_entry.grid(row=1, column=1, sticky="ew", padx=5, ipady=8)
+
+tk.Label(date_grid, text="DAY", font=("Inter", 8, "bold"), fg=text_light, bg="#ffffff").grid(row=0, column=2, sticky="w")
+day_entry = tk.Entry(date_grid, font=("Inter", 11), bg="#f1f5f9", fg=text_dark, bd=0, justify="center")
+day_entry.grid(row=1, column=2, sticky="ew", padx=(5, 0), ipady=8)
 
 # Buttons
-btn_frame = Frame(root, bg=bg_dark)
-btn_frame.pack(pady=20)
+btn_frame = tk.Frame(root, bg="#f8fafc")
+btn_frame.pack(pady=10)
 
-calc_btn = Button(btn_frame, text="Calculate My Age", font=("Segoe UI", 12, "bold"), 
-                  bg=btn_primary, fg="white", bd=0, cursor="hand2",
-                  padx=30, pady=12, command=calculate_age)
-calc_btn.pack(side=LEFT, padx=10)
-calc_btn.bind("<Enter>", on_enter)
-calc_btn.bind("<Leave>", on_leave)
+calc_btn = tk.Button(btn_frame, text="Analyze My Life", font=("Inter", 12, "bold"), 
+                     bg=accent, fg="white", bd=0, cursor="hand2", padx=40, pady=12,
+                     command=calculate_age)
+calc_btn.pack(side="left", padx=10)
 
-reset_btn = Button(btn_frame, text="Reset", font=("Segoe UI", 11), 
-                   bg="#ef4444", fg="white", bd=0, cursor="hand2",
-                   padx=20, pady=12, command=reset_entries)
-reset_btn.pack(side=LEFT, padx=10)
-reset_btn.bind("<Enter>", lambda e: e.widget.config(bg="#dc2626"))
-reset_btn.bind("<Leave>", lambda e: e.widget.config(bg="#ef4444"))
+tk.Button(btn_frame, text="Reset", font=("Inter", 10), bg="#e2e8f0", fg=text_dark, 
+          bd=0, cursor="hand2", padx=20, pady=12, command=reset).pack(side="left", padx=10)
 
-# Result Card (Hidden initially)
-result_frame = Frame(root, bg=card_bg, padx=20, pady=20, highlightthickness=1, highlightbackground=accent_blue)
+# Result Container (Hidden)
+result_container = tk.Frame(root, bg="#ffffff", highlightthickness=2, highlightbackground=accent, padx=25, pady=25)
 
-Label(result_frame, textvariable=result_var, font=("Segoe UI", 18, "bold"), 
-      bg=card_bg, fg=accent_cyan).pack()
-Label(result_frame, textvariable=zodiac_var, font=("Segoe UI", 11, "bold"), 
-      bg=card_bg, fg=text_dim).pack(pady=(0, 10))
+result_name = tk.Label(result_container, text="", font=("Inter", 16, "bold"), fg=text_dark, bg="#ffffff")
+result_name.pack()
+result_age = tk.Label(result_container, text="", font=("Inter", 24, "bold"), fg=accent, bg="#ffffff")
+result_age.pack(pady=5)
+result_zodiac = tk.Label(result_container, text="", font=("Inter", 10, "bold"), fg=text_light, bg="#ffffff")
+result_zodiac.pack()
+result_countdown = tk.Label(result_container, text="", font=("Inter", 10, "italic"), fg=accent, bg="#ffffff")
+result_countdown.pack(pady=(10, 0))
 
-# Age Badge
-age_label = Label(result_frame, textvariable=age_var, font=("Segoe UI", 16), 
-                  bg="#0f172a", fg="white", padx=15, pady=10)
-age_label.pack(fill="x", pady=5)
+# Stats Row
+stats_row = tk.Frame(result_container, bg="#ffffff")
+stats_row.pack(fill="x", pady=(20, 0))
+stats_row.columnconfigure((0,1), weight=1)
 
-Label(result_frame, textvariable=next_bday_var, font=("Segoe UI", 11, "italic"), 
-      bg=card_bg, fg=accent_blue).pack(pady=10)
+def add_stat_box(label, row, col):
+    box = tk.Frame(stats_row, bg="#f8fafc", padx=10, pady=10)
+    box.grid(row=row, column=col, sticky="ew", padx=5)
+    tk.Label(box, text=label, font=("Inter", 8, "bold"), fg=text_light, bg="#f8fafc").pack()
+    val_label = tk.Label(box, text="", font=("Inter", 11, "bold"), fg=text_dark, bg="#f8fafc")
+    val_label.pack()
+    return val_label
 
-# Stats Grid
-stats_frame = Frame(result_frame, bg=card_bg)
-stats_frame.pack(fill="x", pady=10)
-stats_frame.columnconfigure((0, 1), weight=1)
-
-def add_stat(label, var, row, col):
-    f = Frame(stats_frame, bg=card_bg, pady=5)
-    f.grid(row=row, column=col, sticky="nsew")
-    Label(f, text=label, font=("Segoe UI", 9, "bold"), fg=text_dim, bg=card_bg).pack()
-    Label(f, textvariable=var, font=("Segoe UI", 11), fg="white", bg=card_bg).pack()
-
-add_stat("TOTAL DAYS", days_var, 0, 0)
-add_stat("TOTAL HOURS", hours_var, 0, 1)
-add_stat("EST. HEARTBEATS", heart_var, 1, 0)
-add_stat("EST. BREATHS", breath_var, 1, 1)
+stat_days = add_stat_box("TOTAL DAYS", 0, 0)
+stat_hearts = add_stat_box("HEARTBEATS", 0, 1)
 
 name_entry.focus()
 root.mainloop()
