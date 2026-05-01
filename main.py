@@ -81,7 +81,7 @@ def main(page: ft.Page):
                 content=ft.Column([
                     res_name, 
                     res_age, 
-                    ft.Text("YEARS OLD", size=16, weight="bold", color=ft.Colors.BLUE_GREY_500, letter_spacing=2),
+                    ft.Text("YEARS OLD", size=16, weight="bold", color=ft.Colors.BLUE_GREY_500),
                     ft.Divider(height=40, color="transparent"),
                     progress_text,
                     life_progress
@@ -161,8 +161,8 @@ def main(page: ft.Page):
         content=ft.Column(
             [
                 ft.Image(src="Age.png", height=100, fit="contain"),
-                ft.Text("AGE PRO", size=28, weight="bold", color=ft.Colors.WHITE, letter_spacing=1),
-                ft.Text("ELITE ANALYTICS ENGINE", size=10, color=ft.Colors.CYAN_400, weight="bold", letter_spacing=2),
+                ft.Text("AGE PRO", size=28, weight="bold", color=ft.Colors.WHITE),
+                ft.Text("ELITE ANALYTICS ENGINE", size=10, color=ft.Colors.CYAN_400, weight="bold"),
                 ft.Divider(height=60, color=ft.Colors.BLUE_GREY_900),
                 name_input,
                 ft.Row([year_input, month_input, day_input], spacing=10, alignment=ft.MainAxisAlignment.CENTER),
