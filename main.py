@@ -66,10 +66,10 @@ def main(page: ft.Page):
         "label_style": ft.TextStyle(color="#64748B")
     }
 
-    name_input = ft.TextField(label="Full Name", **input_style)
-    year_input = ft.TextField(label="Year", width=110, **input_style)
-    month_input = ft.TextField(label="Month", width=100, **input_style)
-    day_input = ft.TextField(label="Day", width=90, **input_style)
+    name_input = ft.TextField(label="Full Name", expand=True, **input_style)
+    year_input = ft.TextField(label="Year", width=100, **input_style)
+    month_input = ft.TextField(label="Month", width=90, **input_style)
+    day_input = ft.TextField(label="Day", width=80, **input_style)
 
     res_age = ft.Text("0", size=100, weight="bold", color="#007AFF")
     res_name = ft.Text("", size=24, weight="bold", color="#1E293B")
@@ -95,7 +95,7 @@ def main(page: ft.Page):
                     progress_text,
                     life_progress
                 ], horizontal_alignment="center", spacing=0),
-                padding=60, # INCREASED VERTICAL HEIGHT
+                padding=60,
                 border_radius=30,
                 bgcolor="#FFFFFF",
                 gradient=ft.RadialGradient(
@@ -109,7 +109,7 @@ def main(page: ft.Page):
                     color=ft.Colors.with_opacity(0.05, ft.Colors.BLACK),
                     offset=ft.Offset(0, 8),
                 ),
-                margin=ft.Margin(0, 0, 0, 20),
+                margin=ft.margin.only(bottom=25), # Unified Bottom Margin
                 animate_scale=ft.Animation(800, ft.AnimationCurve.EASE_IN_OUT)
             ),
             ft.ResponsiveRow(
@@ -140,7 +140,6 @@ def main(page: ft.Page):
             age = today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
             diff = today - birth
             
-            # Calculations
             perc = min(1.0, age / AVG_LIFE_EXPECTANCY)
             
             res_name.value = f"Greetings, {name}"
@@ -168,22 +167,31 @@ def main(page: ft.Page):
             page.snack_bar.open = True
             page.update()
 
-    # --- Sidebar Assembly ---
+    # --- Sidebar Assembly (Precision Alignment) ---
     
     sidebar = ft.Container(
         content=ft.Column(
             [
-                ft.Image(src="Age.png", height=100, fit="contain"),
-                ft.Text("AGE PRO", size=26, weight="bold", color="#1E293B"),
-                ft.Text("ELITE ANALYTICS ENGINE", size=10, color="#007AFF", weight="bold"),
-                ft.Divider(height=40, color="#F1F5F9"),
-                name_input,
-                ft.Row([year_input, month_input, day_input], spacing=10, alignment=ft.MainAxisAlignment.CENTER),
-                ft.Container(padding=10),
+                ft.Container(
+                    content=ft.Column([
+                        ft.Image(src="Age.png", height=100, fit="contain"),
+                        ft.Text("AGE PRO", size=26, weight="bold", color="#1E293B"),
+                        ft.Text("ELITE ANALYTICS ENGINE", size=10, color="#007AFF", weight="bold"),
+                    ], horizontal_alignment="center", spacing=5),
+                    margin=ft.margin.only(bottom=20)
+                ),
+                ft.Divider(height=1, color="#E2E8F0"),
+                ft.Container(height=20),
+                ft.Text("USER INFORMATION", size=11, weight="bold", color="#94A3B8"),
+                ft.Row([name_input]),
+                ft.Container(height=10),
+                ft.Text("BIRTH DATE", size=11, weight="bold", color="#94A3B8"),
+                ft.Row([year_input, month_input, day_input], spacing=10),
+                ft.Container(height=30),
                 ft.FilledButton(
                     content=ft.Row([ft.Icon(ft.Icons.AUTO_GRAPH), ft.Text("RUN ANALYSIS", weight="bold")], alignment="center"),
                     height=60,
-                    width=300,
+                    width=float("inf"), # Full width
                     on_click=calculate_click,
                     style=ft.ButtonStyle(
                         shape=ft.RoundedRectangleBorder(radius=15),
@@ -192,14 +200,15 @@ def main(page: ft.Page):
                     )
                 ),
                 ft.Container(expand=True),
-                ft.Text("F11 for Focus Mode", size=11, color="#94A3B8"),
+                ft.Row([ft.Icon(ft.Icons.INFO_OUTLINE, size=14, color="#94A3B8"), ft.Text("F11 for Focus Mode", size=11, color="#94A3B8")], alignment="center"),
             ],
-            spacing=15,
-            horizontal_alignment="center",
+            spacing=10,
+            horizontal_alignment="start", # Professional Dashboard Alignment
         ),
-        width=400,
+        width=350,
         padding=40,
         bgcolor="#F1F5F9",
+        border=ft.border.only(right=ft.BorderSide(1, "#E2E8F0"))
     )
 
     page.add(
@@ -209,7 +218,7 @@ def main(page: ft.Page):
                 ft.Container(
                     content=ft.Column([dashboard], scroll="auto", alignment=ft.MainAxisAlignment.START),
                     expand=True,
-                    padding=ft.Padding(40, 0, 40, 40), # NO TOP PADDING
+                    padding=ft.Padding(40, 20, 40, 40), # Balanced Padding
                     bgcolor="#F8FAFC"
                 )
             ],
