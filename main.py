@@ -161,7 +161,7 @@ def main(page: ft.Page):
             content=ft.Column([
                 res_name,
                 res_age,
-                ft.Text("YEARS OLD", size=14, weight="bold", color=TEXT_SECONDARY, letter_spacing=2),
+                ft.Text("YEARS OLD", size=14, weight="bold", color=TEXT_SECONDARY),
                 ft.Container(height=20),
                 life_text,
                 life_bar
