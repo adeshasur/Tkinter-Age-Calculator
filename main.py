@@ -176,7 +176,7 @@ def main(page: ft.Page):
             [
                 ft.Image(src="Age.png", height=100, fit="contain"),
                 ft.Text("AGE PRO", size=26, weight="bold", color="#1E293B"),
-                ft.Text("ELITE ANALYTICS ENGINE", size=10, color="#007AFF", weight="bold", letter_spacing=1),
+                ft.Text("ELITE ANALYTICS ENGINE", size=10, color="#007AFF", weight="bold"),
                 ft.Divider(height=40, color="#F1F5F9"),
                 name_input,
                 ft.Row([year_input, month_input, day_input], spacing=10, alignment=ft.MainAxisAlignment.CENTER),
