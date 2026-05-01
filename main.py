@@ -83,7 +83,7 @@ def main(page: ft.Page):
     card_sleep = StatCard("Dreaming", ft.Icons.BEDTIME)
     card_next = StatCard("Next Birthday", ft.Icons.CAKE)
 
-    # Dashboard Container
+    # Dashboard Container (Fixed at Start)
     dashboard = ft.Column(
         [
             ft.Container(
@@ -127,7 +127,7 @@ def main(page: ft.Page):
         ],
         visible=False,
         animate_opacity=600,
-        expand=True
+        alignment=ft.MainAxisAlignment.START, # FORCE START
     )
 
     def calculate_click(e):
@@ -203,10 +203,9 @@ def main(page: ft.Page):
             [
                 sidebar,
                 ft.Container(
-                    content=ft.Column([dashboard], expand=True, scroll="auto", alignment="start"),
+                    content=ft.Column([dashboard], scroll="auto", alignment=ft.MainAxisAlignment.START), # ABSOLUTE START
                     expand=True,
-                    # REDUCED TOP PADDING TO MOVE IT UP
-                    padding=ft.padding.only(left=40, top=10, right=40, bottom=40),
+                    padding=ft.padding.only(left=40, top=0, right=40, bottom=40), # ZERO TOP PADDING
                     bgcolor="#F8FAFC"
                 )
             ],
