@@ -36,7 +36,7 @@ class StatCard(ft.Container):
             ft.BorderSide(1, ft.Colors.with_opacity(0.1, ft.Colors.WHITE)),
             ft.BorderSide(1, ft.Colors.with_opacity(0.1, ft.Colors.WHITE))
         )
-        self.animate_scale = ft.animation.Animation(300, ft.AnimationCurve.DECELERATE)
+        self.animate_scale = ft.Animation(300, ft.AnimationCurve.DECELERATE)
         self.on_hover = self.hover_effect
         self.expand = True
 
