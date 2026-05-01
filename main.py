@@ -107,7 +107,7 @@ def main(page: ft.Page):
 
     # Simplified Action Button
     run_btn = ft.ElevatedButton(
-        text="RUN ANALYSIS",
+        content=ft.Text("RUN ANALYSIS", weight="bold"),
         icon=ft.Icons.AUTO_GRAPH,
         height=52,
         width=float("inf"),
@@ -122,7 +122,7 @@ def main(page: ft.Page):
     def calculate_click(e):
         try:
             # Feedback
-            run_btn.text = "ANALYZING..."
+            run_btn.content = ft.Text("ANALYZING...", weight="bold")
             run_btn.disabled = True
             page.update()
 
@@ -156,12 +156,12 @@ def main(page: ft.Page):
             card_hearts.value_label.value = f"{diff.days * 24 * 60 * 72:,}"
             card_dreams.value_label.value = f"{int(age * 0.33)} Yrs"
 
-            run_btn.text = "RUN ANALYSIS"
+            run_btn.content = ft.Text("RUN ANALYSIS", weight="bold")
             run_btn.disabled = False
             page.update()
         except Exception as ex:
             print(f"Error: {ex}")
-            run_btn.text = "RUN ANALYSIS"
+            run_btn.content = ft.Text("RUN ANALYSIS", weight="bold")
             run_btn.disabled = False
             page.snack_bar = ft.SnackBar(ft.Text("Error: Please check the date!"))
             page.snack_bar.open = True
