@@ -3,6 +3,11 @@ from datetime import datetime, date
 
 # --- Constants ---
 AVG_LIFE_EXPECTANCY = 80
+PRIMARY_COLOR = "#007AFF"
+TEXT_DARK = "#1E293B"
+TEXT_LIGHT = "#64748B"
+BG_LIGHT = "#F8FAFC"
+SIDEBAR_BG = "#F1F5F9"
 
 # --- Logic ---
 
@@ -18,37 +23,37 @@ def get_zodiac(month, day):
 class StatCard(ft.Container):
     def __init__(self, title, icon, value_text=""):
         super().__init__()
-        self.value_label = ft.Text(value_text, size=24, weight="bold", color="#1E293B")
+        self.value_label = ft.Text(value_text, size=22, weight="bold", color=TEXT_DARK)
         self.content = ft.Column(
             [
-                ft.Row([ft.Icon(icon, color="#007AFF", size=18), ft.Text(title, size=11, color="#64748B", weight="w600")], spacing=8),
+                ft.Row([ft.Icon(icon, color=PRIMARY_COLOR, size=18), ft.Text(title, size=11, color=TEXT_LIGHT, weight="w600")], spacing=8),
                 self.value_label,
             ],
             spacing=5,
         )
-        self.padding = 20
-        self.border_radius = 20
+        self.padding = 24
+        self.border_radius = 16
         self.bgcolor = ft.Colors.WHITE
-        self.shadow = ft.BoxShadow(
-            spread_radius=1,
-            blur_radius=10,
-            color=ft.Colors.with_opacity(0.05, ft.Colors.BLACK),
-            offset=ft.Offset(0, 5),
+        self.border = ft.Border(
+            ft.BorderSide(1, "#E2E8F0"),
+            ft.BorderSide(1, "#E2E8F0"),
+            ft.BorderSide(1, "#E2E8F0"),
+            ft.BorderSide(1, "#E2E8F0")
         )
         self.animate_scale = ft.Animation(300, ft.AnimationCurve.DECELERATE)
         self.on_hover = self.hover_effect
         self.expand = True
 
     def hover_effect(self, e):
-        self.scale = 1.05 if e.data == "true" else 1.0
-        self.shadow.blur_radius = 20 if e.data == "true" else 10
+        self.scale = 1.03 if e.data == "true" else 1.0
+        self.border = ft.border.all(1, PRIMARY_COLOR if e.data == "true" else "#E2E8F0")
         self.update()
 
 def main(page: ft.Page):
     page.title = "Age Pro - Elite Design"
-    page.window_width = 1200
-    page.window_height = 900
-    page.bgcolor = "#F8FAFC"
+    page.window_width = 1300
+    page.window_height = 950
+    page.bgcolor = BG_LIGHT
     page.padding = 0
     page.fonts = {
         "Outfit": "https://github.com/google/fonts/raw/main/ofl/outfit/Outfit-VariableFont_wght.ttf"
@@ -58,75 +63,67 @@ def main(page: ft.Page):
     # --- UI Elements ---
     
     input_style = {
-        "border_radius": 15,
+        "border_radius": 12,
         "border_color": "#E2E8F0",
-        "focused_border_color": "#007AFF",
+        "focused_border_color": PRIMARY_COLOR,
         "bgcolor": "#FFFFFF",
-        "color": "#1E293B",
-        "label_style": ft.TextStyle(color="#64748B")
+        "color": TEXT_DARK,
+        "label_style": ft.TextStyle(color=TEXT_LIGHT, size=12),
+        "height": 50,
+        "content_padding": 15
     }
 
-    name_input = ft.TextField(label="Full Name", expand=True, **input_style)
-    year_input = ft.TextField(label="Year", width=100, **input_style)
-    month_input = ft.TextField(label="Month", width=90, **input_style)
-    day_input = ft.TextField(label="Day", width=80, **input_style)
+    name_input = ft.TextField(label="Full Name", **input_style)
+    year_input = ft.TextField(label="Year", width=90, **input_style)
+    month_input = ft.TextField(label="Month", width=80, **input_style)
+    day_input = ft.TextField(label="Day", width=70, **input_style)
 
-    res_age = ft.Text("0", size=100, weight="bold", color="#007AFF")
-    res_name = ft.Text("", size=24, weight="bold", color="#1E293B")
-    life_progress = ft.ProgressBar(width=500, color="#007AFF", bgcolor="#E2E8F0", height=12, border_radius=10)
-    progress_text = ft.Text("Life Journey Progress: 0%", size=14, color="#64748B", weight="w500")
+    res_age = ft.Text("0", size=110, weight="bold", color=PRIMARY_COLOR)
+    res_name = ft.Text("", size=24, weight="bold", color=TEXT_DARK)
+    life_progress = ft.ProgressBar(width=600, color=PRIMARY_COLOR, bgcolor="#E2E8F0", height=10, border_radius=5)
+    progress_text = ft.Text("Journey Progress: 0%", size=13, color=TEXT_LIGHT, weight="w500")
     
-    card_zodiac = StatCard("Zodiac", ft.Icons.STARS)
-    card_days = StatCard("Days", ft.Icons.CALENDAR_MONTH)
-    card_hearts = StatCard("Heartbeats", ft.Icons.FAVORITE)
-    card_weeks = StatCard("Weeks", ft.Icons.CALENDAR_VIEW_WEEK)
-    card_sleep = StatCard("Dreaming", ft.Icons.BEDTIME)
-    card_next = StatCard("Next Birthday", ft.Icons.CAKE)
-
-    # Dashboard Container
-    dashboard = ft.Column(
+    # Grid Components
+    grid = ft.ResponsiveRow(
         [
-            ft.Container(
-                content=ft.Column([
-                    res_name, 
-                    res_age, 
-                    ft.Text("YEARS OLD", size=14, weight="bold", color="#94A3B8"),
-                    ft.Divider(height=20, color="transparent"),
-                    progress_text,
-                    life_progress
-                ], horizontal_alignment="center", spacing=0),
-                padding=60,
-                border_radius=30,
-                bgcolor="#FFFFFF",
-                gradient=ft.RadialGradient(
-                    center=ft.Alignment(0, 0),
-                    radius=2,
-                    colors=[ft.Colors.with_opacity(0.05, "#007AFF"), ft.Colors.WHITE]
-                ),
-                shadow=ft.BoxShadow(
-                    spread_radius=1,
-                    blur_radius=20,
-                    color=ft.Colors.with_opacity(0.05, ft.Colors.BLACK),
-                    offset=ft.Offset(0, 8),
-                ),
-                margin=ft.margin.only(bottom=25), # Unified Bottom Margin
-                animate_scale=ft.Animation(800, ft.AnimationCurve.EASE_IN_OUT)
-            ),
-            ft.ResponsiveRow(
-                [
-                    ft.Column([card_zodiac], col={"sm": 6, "md": 4}),
-                    ft.Column([card_next], col={"sm": 6, "md": 4}),
-                    ft.Column([card_days], col={"sm": 6, "md": 4}),
-                    ft.Column([card_weeks], col={"sm": 6, "md": 4}),
-                    ft.Column([card_hearts], col={"sm": 6, "md": 4}),
-                    ft.Column([card_sleep], col={"sm": 6, "md": 4}),
-                ],
-                spacing=20,
-                run_spacing=20,
-            )
+            ft.Column([StatCard("Zodiac", ft.Icons.STARS)], col={"sm": 6, "md": 4}),
+            ft.Column([StatCard("Next Birthday", ft.Icons.CAKE)], col={"sm": 6, "md": 4}),
+            ft.Column([StatCard("Days Lived", ft.Icons.CALENDAR_MONTH)], col={"sm": 6, "md": 4}),
+            ft.Column([StatCard("Total Weeks", ft.Icons.CALENDAR_VIEW_WEEK)], col={"sm": 6, "md": 4}),
+            ft.Column([StatCard("Heartbeats", ft.Icons.FAVORITE)], col={"sm": 6, "md": 4}),
+            ft.Column([StatCard("Years Dreaming", ft.Icons.BEDTIME)], col={"sm": 6, "md": 4}),
         ],
+        spacing=20,
+        run_spacing=20,
+    )
+
+    # Main Result Content (The Hero)
+    hero_card = ft.Container(
+        content=ft.Column([
+            res_name, 
+            res_age, 
+            ft.Text("YEARS OLD", size=14, weight="bold", color="#94A3B8"),
+            ft.Container(height=30),
+            progress_text,
+            life_progress
+        ], horizontal_alignment="center", spacing=0),
+        padding=60,
+        border_radius=24,
+        bgcolor="#FFFFFF",
+        border=ft.border.all(1, "#E2E8F0"),
+        gradient=ft.RadialGradient(
+            center=ft.Alignment(0, -0.2),
+            radius=1.5,
+            colors=[ft.Colors.with_opacity(0.03, PRIMARY_COLOR), ft.Colors.WHITE]
+        ),
+        margin=ft.margin.only(bottom=30),
+    )
+
+    dashboard = ft.Column(
+        [hero_card, grid],
         visible=False,
         animate_opacity=600,
+        width=900, # Fixed Width for Alignment
         alignment=ft.MainAxisAlignment.START,
     )
 
@@ -139,75 +136,69 @@ def main(page: ft.Page):
 
             age = today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
             diff = today - birth
-            
             perc = min(1.0, age / AVG_LIFE_EXPECTANCY)
             
             res_name.value = f"Greetings, {name}"
             res_age.value = str(age)
             life_progress.value = perc
-            progress_text.value = f"Life Journey Progress: {int(perc*100)}% (Based on 80yr avg)"
+            progress_text.value = f"Journey Progress: {int(perc*100)}% (Based on 80yr avg)"
             
-            card_zodiac.value_label.value = get_zodiac(m, d)
-            card_days.value_label.value = f"{diff.days:,}"
-            card_hearts.value_label.value = f"{diff.days * 24 * 60 * 72:,}"
-            card_weeks.value_label.value = f"{diff.days // 7:,}"
-            card_sleep.value_label.value = f"{int(age * 0.33)} Yrs"
-            
-            next_b = date(today.year, m, d)
-            if next_b < today.date(): next_b = date(today.year + 1, m, d)
-            card_next.value_label.value = f"{(next_b - today.date()).days} Days"
+            # Update Grid Cards
+            grid.controls[0].content.controls[0].value_label.value = get_zodiac(m, d)
+            grid.controls[1].content.controls[0].value_label.value = f"{(date(today.year + (date(today.year, m, d) < today.date()), m, d) - today.date()).days} Days"
+            grid.controls[2].content.controls[0].value_label.value = f"{diff.days:,}"
+            grid.controls[3].content.controls[0].value_label.value = f"{diff.days // 7:,}"
+            grid.controls[4].content.controls[0].value_label.value = f"{diff.days * 24 * 60 * 72:,}"
+            grid.controls[5].content.controls[0].value_label.value = f"{int(age * 0.33)} Yrs"
 
             dashboard.visible = True
             dashboard.opacity = 1
-            dashboard.controls[0].scale = 1.02
             page.update()
-        except Exception as ex:
-            print(f"Error: {ex}")
-            page.snack_bar = ft.SnackBar(ft.Text("Invalid birth date. Check again!"))
+        except:
+            page.snack_bar = ft.SnackBar(ft.Text("Invalid birth date!"))
             page.snack_bar.open = True
             page.update()
 
-    # --- Sidebar Assembly (Precision Alignment) ---
+    # --- Sidebar (Perfect Alignment) ---
     
     sidebar = ft.Container(
         content=ft.Column(
             [
-                ft.Container(
-                    content=ft.Column([
-                        ft.Image(src="Age.png", height=100, fit="contain"),
-                        ft.Text("AGE PRO", size=26, weight="bold", color="#1E293B"),
-                        ft.Text("ELITE ANALYTICS ENGINE", size=10, color="#007AFF", weight="bold"),
-                    ], horizontal_alignment="center", spacing=5),
-                    margin=ft.margin.only(bottom=20)
-                ),
-                ft.Divider(height=1, color="#E2E8F0"),
-                ft.Container(height=20),
-                ft.Text("USER INFORMATION", size=11, weight="bold", color="#94A3B8"),
-                ft.Row([name_input]),
+                ft.Column([
+                    ft.Image(src="Age.png", height=80, fit="contain"),
+                    ft.Text("AGE PRO", size=24, weight="bold", color=TEXT_DARK),
+                    ft.Text("ELITE ANALYTICS", size=10, color=PRIMARY_COLOR, weight="bold"),
+                ], spacing=5, horizontal_alignment="start"),
+                
+                ft.Container(height=40),
+                ft.Text("USER DETAILS", size=11, weight="bold", color="#94A3B8"),
+                name_input,
                 ft.Container(height=10),
                 ft.Text("BIRTH DATE", size=11, weight="bold", color="#94A3B8"),
-                ft.Row([year_input, month_input, day_input], spacing=10),
-                ft.Container(height=30),
+                ft.Row([year_input, month_input, day_input], spacing=8),
+                
+                ft.Container(height=40),
                 ft.FilledButton(
-                    content=ft.Row([ft.Icon(ft.Icons.AUTO_GRAPH), ft.Text("RUN ANALYSIS", weight="bold")], alignment="center"),
-                    height=60,
-                    width=float("inf"), # Full width
+                    content=ft.Row([ft.Icon(ft.Icons.AUTO_GRAPH, size=20), ft.Text("RUN ANALYSIS", weight="bold")], alignment="center"),
+                    height=55,
+                    width=300,
                     on_click=calculate_click,
                     style=ft.ButtonStyle(
-                        shape=ft.RoundedRectangleBorder(radius=15),
+                        shape=ft.RoundedRectangleBorder(radius=12),
                         color=ft.Colors.WHITE,
-                        bgcolor="#007AFF"
+                        bgcolor=PRIMARY_COLOR
                     )
                 ),
+                
                 ft.Container(expand=True),
-                ft.Row([ft.Icon(ft.Icons.INFO_OUTLINE, size=14, color="#94A3B8"), ft.Text("F11 for Focus Mode", size=11, color="#94A3B8")], alignment="center"),
+                ft.Row([ft.Icon(ft.Icons.LOCK_OUTLINE, size=12, color="#94A3B8"), ft.Text("Local Data Encryption Active", size=10, color="#94A3B8")], alignment="start"),
             ],
             spacing=10,
-            horizontal_alignment="start", # Professional Dashboard Alignment
+            horizontal_alignment="start",
         ),
         width=350,
-        padding=40,
-        bgcolor="#F1F5F9",
+        padding=50,
+        bgcolor=SIDEBAR_BG,
         border=ft.border.only(right=ft.BorderSide(1, "#E2E8F0"))
     )
 
@@ -216,10 +207,10 @@ def main(page: ft.Page):
             [
                 sidebar,
                 ft.Container(
-                    content=ft.Column([dashboard], scroll="auto", alignment=ft.MainAxisAlignment.START),
+                    content=ft.Column([dashboard], scroll="auto", alignment=ft.MainAxisAlignment.START, horizontal_alignment="center"),
                     expand=True,
-                    padding=ft.Padding(40, 20, 40, 40), # Balanced Padding
-                    bgcolor="#F8FAFC"
+                    padding=ft.Padding(50, 40, 50, 50),
+                    bgcolor=BG_LIGHT
                 )
             ],
             expand=True,
