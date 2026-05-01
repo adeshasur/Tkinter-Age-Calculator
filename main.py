@@ -83,7 +83,6 @@ def main(page: ft.Page):
     card_sleep = StatCard("Dreaming", ft.Icons.BEDTIME)
     card_next = StatCard("Next Birthday", ft.Icons.CAKE)
 
-    # Dashboard Container (Fixed at Start)
     dashboard = ft.Column(
         [
             ft.Container(
@@ -127,7 +126,7 @@ def main(page: ft.Page):
         ],
         visible=False,
         animate_opacity=600,
-        alignment=ft.MainAxisAlignment.START, # FORCE START
+        alignment=ft.MainAxisAlignment.START,
     )
 
     def calculate_click(e):
@@ -162,8 +161,9 @@ def main(page: ft.Page):
             dashboard.opacity = 1
             dashboard.controls[0].scale = 1.02
             page.update()
-        except:
-            page.snack_bar = ft.SnackBar(ft.Text("Invalid date!"))
+        except Exception as ex:
+            print(f"Error: {ex}")
+            page.snack_bar = ft.SnackBar(ft.Text("Invalid birth date. Check again!"))
             page.snack_bar.open = True
             page.update()
 
@@ -179,13 +179,17 @@ def main(page: ft.Page):
                 name_input,
                 ft.Row([year_input, month_input, day_input], spacing=10, alignment=ft.MainAxisAlignment.CENTER),
                 ft.Container(padding=10),
-                ft.ElevatedButton(
-                    content=ft.Row([ft.Icon(ft.Icons.AUTO_GRAPH), ft.Text("RUN ANALYSIS", weight="bold")], alignment="center"),
-                    bgcolor="#007AFF", 
-                    color=ft.Colors.WHITE, 
-                    height=60, 
+                ft.FilledButton(
+                    text="RUN ANALYSIS",
+                    icon=ft.Icons.AUTO_GRAPH,
+                    height=60,
+                    width=300,
                     on_click=calculate_click,
-                    style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=15))
+                    style=ft.ButtonStyle(
+                        shape=ft.RoundedRectangleBorder(radius=15),
+                        color=ft.Colors.WHITE,
+                        bgcolor="#007AFF"
+                    )
                 ),
                 ft.Container(expand=True),
                 ft.Text("F11 for Focus Mode", size=11, color="#94A3B8"),
@@ -203,9 +207,9 @@ def main(page: ft.Page):
             [
                 sidebar,
                 ft.Container(
-                    content=ft.Column([dashboard], scroll="auto", alignment=ft.MainAxisAlignment.START), # ABSOLUTE START
+                    content=ft.Column([dashboard], scroll="auto", alignment=ft.MainAxisAlignment.START),
                     expand=True,
-                    padding=ft.padding.only(left=40, top=0, right=40, bottom=40), # ZERO TOP PADDING
+                    padding=ft.Padding(40, 0, 40, 40), # Standard Padding syntax
                     bgcolor="#F8FAFC"
                 )
             ],
