@@ -133,9 +133,9 @@ def main(page: ft.Page):
     left_panel = ft.Container(
         content=ft.Column([
             ft.Column([
-                ft.Text("AgePro", size=28, weight="bold", color=TEXT_MAIN),
-                ft.Image(src="Age.png", height=45, fit="contain"),
-            ], horizontal_alignment="center", spacing=5),
+                ft.Text("AgePro", size=32, weight="bold", color=TEXT_MAIN),
+                ft.Image(src="Age.png", height=70, fit="contain"),
+            ], horizontal_alignment="center", spacing=10),
             ft.Container(height=40),
             ft.Text("USER INFORMATION", size=10, weight="bold", color=TEXT_SECONDARY),
             name_input,
@@ -152,7 +152,7 @@ def main(page: ft.Page):
             ),
             ft.Container(expand=True),
             ft.Row([ft.Text("Developed by Adheesha Sooriyaarachchi", size=10, color=TEXT_SECONDARY)], alignment="center")
-        ], spacing=10),
+        ], spacing=10, horizontal_alignment="center"),
         width=400,
         padding=50,
         bgcolor=BG_PANEL,
