@@ -180,8 +180,7 @@ def main(page: ft.Page):
                 ft.Row([year_input, month_input, day_input], spacing=10, alignment=ft.MainAxisAlignment.CENTER),
                 ft.Container(padding=10),
                 ft.FilledButton(
-                    text="RUN ANALYSIS",
-                    icon=ft.Icons.AUTO_GRAPH,
+                    content=ft.Row([ft.Icon(ft.Icons.AUTO_GRAPH), ft.Text("RUN ANALYSIS", weight="bold")], alignment="center"),
                     height=60,
                     width=300,
                     on_click=calculate_click,
