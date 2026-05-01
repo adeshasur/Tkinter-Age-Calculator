@@ -1,148 +1,161 @@
-import customtkinter as ctk
-from tkinter import messagebox
-from datetime import date, datetime, timedelta
-from PIL import Image
-import time
+import flet as ft
+from datetime import datetime, date, timedelta
 
-# --- Theme Configuration ---
-ctk.set_appearance_mode("Light")
-ctk.set_default_color_theme("blue")
+# --- Logic ---
 
-class SaasDashboardAgeApp(ctk.CTk):
-    def __init__(self):
+def get_zodiac(month, day):
+    zodiac_signs = [(1, 20, "Capricorn"), (2, 19, "Aquarius"), (3, 21, "Pisces"), (4, 20, "Aries"), (5, 21, "Taurus"), (6, 21, "Gemini"), (7, 23, "Cancer"), (8, 23, "Leo"), (9, 23, "Virgo"), (10, 23, "Libra"), (11, 22, "Scorpio"), (12, 22, "Sagittarius"), (12, 31, "Capricorn")]
+    for m, d, sign in zodiac_signs:
+        if month < m or (month == m and day <= d):
+            return sign
+    return "Unknown"
+
+# --- UI Components ---
+
+class StatCard(ft.Container):
+    def __init__(self, title, icon, value_text=""):
         super().__init__()
+        self.value_label = ft.Text(value_text, size=24, weight="bold", color=ft.Colors.WHITE)
+        self.content = ft.Column(
+            [
+                ft.Row([ft.Icon(icon, color=ft.Colors.BLUE_400, size=20), ft.Text(title, size=12, color=ft.Colors.BLUE_GREY_200, weight="w500")], spacing=10),
+                self.value_label,
+            ],
+            spacing=5,
+        )
+        self.padding = 20
+        self.border_radius = 20
+        self.bgcolor = ft.Colors.with_opacity(0.1, ft.Colors.BLUE_GREY_900)
+        self.border = ft.border.all(1, ft.Colors.with_opacity(0.1, ft.Colors.WHITE))
+        self.expand = True
 
-        self.title("Age Pro - SaaS Dashboard")
-        self.after(0, lambda: self.state('zoomed'))
-        
-        # Appearance Mode Toggle logic
-        self.is_dark = False
+def main(page: ft.Page):
+    page.title = "Age Pro - Ultimate UX"
+    page.window_width = 1100
+    page.window_height = 800
+    page.bgcolor = "#0B1120"
+    page.padding = 40
+    page.fonts = {
+        "Outfit": "https://github.com/google/fonts/raw/main/ofl/outfit/Outfit-VariableFont_wght.ttf"
+    }
+    page.theme = ft.Theme(font_family="Outfit")
 
-        self.setup_ui()
-        self.update_live_counter()
+    # App State
+    birth_date_ref = {"val": None}
 
-    def setup_ui(self):
-        self.grid_columnconfigure(1, weight=1)
-        self.grid_rowconfigure(0, weight=1)
+    # --- UI Elements ---
+    
+    # Left Column: Input Card
+    name_input = ft.TextField(label="Full Name", border_radius=15, border_color=ft.Colors.BLUE_GREY_700, focused_border_color=ft.Colors.BLUE_400, label_style=ft.TextStyle(color=ft.Colors.BLUE_GREY_400))
+    year_input = ft.TextField(label="Year", border_radius=15, width=100, border_color=ft.Colors.BLUE_GREY_700)
+    month_input = ft.TextField(label="Month", border_radius=15, width=80, border_color=ft.Colors.BLUE_GREY_700)
+    day_input = ft.TextField(label="Day", border_radius=15, width=80, border_color=ft.Colors.BLUE_GREY_700)
 
-        # --- SIDEBAR ---
-        self.sidebar = ctk.CTkFrame(self, width=300, corner_radius=0, fg_color="#1e293b")
-        self.sidebar.grid(row=0, column=0, sticky="nsew")
-        self.sidebar.grid_rowconfigure(4, weight=1)
+    # Result Labels
+    res_age = ft.Text("0", size=100, weight="bold", color=ft.Colors.BLUE_400)
+    res_name = ft.Text("", size=24, weight="w500", color=ft.Colors.WHITE)
+    
+    # Stats Grid
+    card_zodiac = StatCard("Zodiac Sign", ft.Icons.STARS)
+    card_days = StatCard("Days Lived", ft.Icons.CALENDAR_MONTH)
+    card_hearts = StatCard("Est. Heartbeats", ft.Icons.FAVORITE)
+    card_weeks = StatCard("Weeks Lived", ft.Icons.WEEKS)
+    card_sleep = StatCard("Years Asleep", ft.Icons.BEDTIME)
+    card_next = StatCard("Next Birthday", ft.Icons.CAKE)
 
+    # Dashboard Container
+    dashboard = ft.Column(
+        [
+            ft.Container(
+                content=ft.Column([res_name, res_age, ft.Text("Years of wisdom and growth.", color=ft.Colors.BLUE_GREY_400)], horizontal_alignment="center", spacing=0),
+                padding=40,
+                border_radius=30,
+                bgcolor=ft.Colors.with_opacity(0.05, ft.Colors.BLUE_400),
+                border=ft.border.all(1, ft.Colors.with_opacity(0.2, ft.Colors.BLUE_400)),
+                margin=ft.margin.only(bottom=20)
+            ),
+            ft.ResponsiveRow(
+                [
+                    ft.Column([card_zodiac], col={"sm": 6, "md": 4}),
+                    ft.Column([card_next], col={"sm": 6, "md": 4}),
+                    ft.Column([card_days], col={"sm": 6, "md": 4}),
+                    ft.Column([card_weeks], col={"sm": 6, "md": 4}),
+                    ft.Column([card_hearts], col={"sm": 6, "md": 4}),
+                    ft.Column([card_sleep], col={"sm": 6, "md": 4}),
+                ],
+                spacing=20,
+                run_spacing=20,
+            )
+        ],
+        visible=False,
+        animate_opacity=300
+    )
+
+    def calculate_click(e):
         try:
-            img = Image.open("Age.png")
-            self.logo = ctk.CTkImage(light_image=img, dark_image=img, size=(220, 60))
-            ctk.CTkLabel(self.sidebar, image=self.logo, text="").grid(row=0, column=0, padx=20, pady=(40, 20))
-        except: pass
-
-        ctk.CTkLabel(self.sidebar, text="AGE PRO", font=("SF Pro Display", 24, "bold"), text_color="white").grid(row=1, column=0, padx=20, pady=(0, 30))
-
-        # Input Form in Sidebar
-        self.input_f = ctk.CTkFrame(self.sidebar, fg_color="transparent")
-        self.input_f.grid(row=2, column=0, padx=20, pady=10, sticky="ew")
-
-        self.name_e = ctk.CTkEntry(self.input_f, placeholder_text="Full Name", height=45, corner_radius=10, border_width=0, fg_color="#334155", text_color="white")
-        self.name_e.pack(fill="x", pady=5)
-
-        self.date_f = ctk.CTkFrame(self.input_f, fg_color="transparent")
-        self.date_f.pack(fill="x", pady=5)
-        ec = {"height": 45, "corner_radius": 10, "border_width": 0, "fg_color": "#334155", "text_color": "white", "width": 60}
-        self.y_e = ctk.CTkEntry(self.date_f, placeholder_text="YYYY", **ec)
-        self.y_e.pack(side="left", expand=True, padx=(0, 2))
-        self.m_e = ctk.CTkEntry(self.date_f, placeholder_text="MM", **ec)
-        self.m_e.pack(side="left", expand=True, padx=2)
-        self.d_e = ctk.CTkEntry(self.date_f, placeholder_text="DD", **ec)
-        self.d_e.pack(side="left", expand=True, padx=(2, 0))
-
-        self.calc_btn = ctk.CTkButton(self.sidebar, text="Run Analytics", height=50, corner_radius=10, fg_color="#3b82f6", hover_color="#2563eb", font=("SF Pro Text", 14, "bold"), command=self.calculate)
-        self.calc_btn.grid(row=3, column=0, padx=20, pady=30, sticky="ew")
-
-        # Bottom Sidebar
-        self.mode_btn = ctk.CTkButton(self.sidebar, text="Switch Theme", height=40, corner_radius=10, fg_color="#475569", command=self.toggle_theme)
-        self.mode_btn.grid(row=5, column=0, padx=20, pady=20, sticky="ew")
-
-        # --- MAIN AREA ---
-        self.main_area = ctk.CTkFrame(self, fg_color="#F8FAFC", corner_radius=0)
-        self.main_area.grid(row=0, column=1, sticky="nsew")
-        
-        self.welcome_lbl = ctk.CTkLabel(self.main_area, text="Welcome to Age Pro Dashboard\nEnter details to generate your life report.", font=("SF Pro Text", 20), text_color="#94a3b8")
-        self.welcome_lbl.place(relx=0.5, rely=0.5, anchor="center")
-
-        # Dashboard View (Hidden initially)
-        self.dashboard = ctk.CTkScrollableFrame(self.main_area, fg_color="transparent")
-        
-    def toggle_theme(self):
-        self.is_dark = not self.is_dark
-        ctk.set_appearance_mode("Dark" if self.is_dark else "Light")
-        self.main_area.configure(fg_color="#0f172a" if self.is_dark else "#F8FAFC")
-
-    def create_card(self, parent, title, val_var, row, col, span=1):
-        c = ctk.CTkFrame(parent, fg_color="#FFFFFF" if not self.is_dark else "#1e293b", corner_radius=20, border_width=1, border_color="#E2E8F0" if not self.is_dark else "#334155")
-        c.grid(row=row, column=col, columnspan=span, padx=10, pady=10, sticky="nsew")
-        ctk.CTkLabel(c, text=title, font=("SF Pro Text", 12, "bold"), text_color="#64748b").pack(pady=(20, 0))
-        lbl = ctk.CTkLabel(c, text="", font=("SF Pro Display", 28, "bold"), text_color="#3b82f6")
-        lbl.pack(pady=(0, 20))
-        return lbl
-
-    def calculate(self):
-        try:
-            name = self.name_e.get().strip()
-            y, m, d = int(self.y_e.get()), int(self.m_e.get()), int(self.d_e.get())
-            self.birth_date = datetime(y, m, d)
-            
-            self.welcome_lbl.place_forget()
-            self.dashboard.place(relx=0, rely=0, relwidth=1, relheight=1)
-
-            for w in self.dashboard.winfo_children(): w.destroy()
-
-            # Layout Grid
-            self.dashboard.grid_columnconfigure((0, 1, 2), weight=1)
-
-            # 1. Age Hero Card
-            hero = ctk.CTkFrame(self.dashboard, fg_color="#3b82f6", corner_radius=25)
-            hero.grid(row=0, column=0, columnspan=3, padx=10, pady=20, sticky="ew")
-            
-            ctk.CTkLabel(hero, text=f"Life Summary for {name}", font=("SF Pro Display", 18), text_color="white").pack(pady=(30, 5))
-            self.live_age_lbl = ctk.CTkLabel(hero, text="", font=("SF Pro Display", 72, "bold"), text_color="white")
-            self.live_age_lbl.pack(pady=(0, 30))
-
-            # 2. Stats Grid
-            self.card_days = self.create_card(self.dashboard, "TOTAL DAYS LIVED", None, 1, 0)
-            self.card_weeks = self.create_card(self.dashboard, "TOTAL WEEKS", None, 1, 1)
-            self.card_hearts = self.create_card(self.dashboard, "EST. HEARTBEATS", None, 1, 2)
-
-            self.card_zodiac = self.create_card(self.dashboard, "ZODIAC SIGN", None, 2, 0)
-            self.card_stone = self.create_card(self.dashboard, "BIRTH STONE", None, 2, 1)
-            self.card_flower = self.create_card(self.dashboard, "BIRTH FLOWER", None, 2, 2)
-
-            # Data update
+            name = name_input.value
+            y, m, d = int(year_input.value), int(month_input.value), int(day_input.value)
+            birth = datetime(y, m, d)
+            birth_date_ref["val"] = birth
             today = datetime.now()
-            age_yrs = today.year - self.birth_date.year - ((today.month, today.day) < (self.birth_date.month, self.birth_date.day))
-            diff = today - self.birth_date
-            
-            self.card_days.configure(text=f"{diff.days:,}")
-            self.card_weeks.configure(text=f"{diff.days // 7:,}")
-            self.card_hearts.configure(text=f"{diff.days * 24 * 60 * 72:,}")
-            self.card_zodiac.configure(text="Aquarius") # Placeholder
-            self.card_stone.configure(text="Amethyst") # Placeholder
-            self.card_flower.configure(text="Violet") # Placeholder
 
+            age = today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
+            diff = today - birth
+            
+            # Update Dashboard
+            res_name.value = f"Welcome, {name}"
+            res_age.value = str(age)
+            
+            card_zodiac.value_label.value = get_zodiac(m, d)
+            card_days.value_label.value = f"{diff.days:,}"
+            card_hearts.value_label.value = f"{diff.days * 24 * 60 * 72:,}"
+            card_weeks.value_label.value = f"{diff.days // 7:,}"
+            card_sleep.value_label.value = f"{age // 3} Yrs"
+            
+            next_b = date(today.year, m, d)
+            if next_b < today.date(): next_b = date(today.year + 1, m, d)
+            card_next.value_label.value = f"{(next_b - today.date()).days} Days"
+
+            dashboard.visible = True
+            dashboard.opacity = 1
+            page.update()
         except:
-            messagebox.showerror("Error", "Check your inputs")
+            page.snack_bar = ft.SnackBar(ft.Text("Please enter a valid birth date!"))
+            page.snack_bar.open = True
+            page.update()
 
-    def update_live_counter(self):
-        if hasattr(self, 'birth_date'):
-            now = datetime.now()
-            diff = now - self.birth_date
-            # Calculate precise age
-            years = now.year - self.birth_date.year - ((now.month, now.day, now.hour, now.minute, now.second) < (self.birth_date.month, self.birth_date.day, self.birth_date.hour, self.birth_date.minute, self.birth_date.second))
-            
-            # Simple version for the live counter: Years, Months, Days, Secs
-            self.live_age_lbl.configure(text=f"{years}Y {diff.days % 365}D {diff.seconds}S")
-        
-        self.after(1000, self.update_live_counter)
+    # --- Layout Assembly ---
+    
+    sidebar = ft.Container(
+        content=ft.Column(
+            [
+                ft.Image(src="Age.png", height=80, fit="contain"),
+                ft.Text("AGE PRO", size=24, weight="bold", color=ft.Colors.WHITE),
+                ft.Divider(height=40, color=ft.Colors.BLUE_GREY_800),
+                name_input,
+                ft.Row([year_input, month_input, day_input], spacing=10),
+                ft.ElevatedButton("Run Analysis", icon=ft.Icons.AUTO_GRAPH, bgcolor=ft.Colors.BLUE_600, color=ft.Colors.WHITE, height=55, on_click=calculate_click),
+                ft.Text("Press F11 for Full Screen", size=10, color=ft.Colors.BLUE_GREY_600),
+            ],
+            spacing=20,
+            horizontal_alignment="center",
+        ),
+        width=350,
+        padding=40,
+        bgcolor="#111827",
+        border_radius=30,
+    )
+
+    page.add(
+        ft.Row(
+            [
+                sidebar,
+                ft.VerticalDivider(width=20, color="transparent"),
+                ft.Column([dashboard], expand=True, scroll="auto")
+            ],
+            expand=True,
+        )
+    )
 
 if __name__ == "__main__":
-    app = SaasDashboardAgeApp()
-    app.mainloop()
+    ft.app(target=main)
