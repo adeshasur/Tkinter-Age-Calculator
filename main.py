@@ -141,7 +141,7 @@ def main(page: ft.Page):
             ft.Row([year_input, month_input, day_input], spacing=10),
             ft.Container(height=30),
             ft.ElevatedButton(
-                text="ANALYZE NOW",
+                content=ft.Text("ANALYZE NOW", weight="bold"),
                 on_click=calculate_click,
                 height=50,
                 width=float("inf"),
