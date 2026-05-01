@@ -24,21 +24,30 @@ def get_zodiac(month, day):
 # --- Reusable Components ---
 
 class AnalyticsCard(ft.Container):
-    def __init__(self, title, icon, value_text="--"):
+    def __init__(self, title, icon, color, value_text="--"):
         super().__init__()
         self.value_label = ft.Text(value_text, size=24, weight="bold", color=TEXT_MAIN)
         self.content = ft.Column(
             [
-                ft.Row([ft.Icon(icon, color=ACCENT, size=18), ft.Text(title, size=11, color=TEXT_SECONDARY, weight="w600")], spacing=10),
+                ft.Row([
+                    ft.Container(
+                        content=ft.Icon(icon, color=color, size=16),
+                        padding=8,
+                        bgcolor=ft.Colors.with_opacity(0.1, color),
+                        border_radius=10
+                    ),
+                    ft.Text(title, size=10, color=TEXT_SECONDARY, weight="w700", letter_spacing=0.5)
+                ], spacing=10),
+                ft.Container(height=5),
                 self.value_label,
             ],
-            spacing=5,
+            spacing=0,
         )
         self.padding = 24
-        self.border_radius = 20
+        self.border_radius = 24
         self.bgcolor = BG_WHITE
         self.border = ft.border.all(1, BORDER_COLOR)
-        self.shadow = ft.BoxShadow(spread_radius=0, blur_radius=20, color=ft.Colors.with_opacity(0.03, ft.Colors.BLACK), offset=ft.Offset(0, 5))
+        self.shadow = ft.BoxShadow(spread_radius=0, blur_radius=25, color=ft.Colors.with_opacity(0.04, ft.Colors.BLACK), offset=ft.Offset(0, 8))
         self.animate_scale = ft.Animation(400, ft.AnimationCurve.EASE_OUT_BACK)
         self.on_hover = self.toggle_hover
         self.expand = True
@@ -49,10 +58,10 @@ class AnalyticsCard(ft.Container):
         self.update()
 
 def main(page: ft.Page):
-    page.title = "AgePro Elite"
+    page.title = "AgePro Pro - Elite Dashboard"
     page.bgcolor = BG_WHITE
     page.padding = 0
-    page.window_width = 1300
+    page.window_width = 1350
     page.window_height = 950
     page.fonts = {"Outfit": "https://github.com/google/fonts/raw/main/ofl/outfit/Outfit-VariableFont_wght.ttf"}
     page.theme = ft.Theme(font_family="Outfit")
@@ -66,7 +75,7 @@ def main(page: ft.Page):
         "bgcolor": BG_PANEL,
         "color": TEXT_MAIN,
         "label_style": ft.TextStyle(color=TEXT_SECONDARY, size=12),
-        "height": 50,
+        "height": 52,
         "content_padding": 15
     }
 
@@ -75,39 +84,33 @@ def main(page: ft.Page):
     month_input = ft.TextField(label="Month", expand=True, **input_style)
     day_input = ft.TextField(label="Day", expand=True, **input_style)
 
-    # --- Right Panel: Results Area ---
+    # --- Right Panel: Analytics Dashboard ---
     
-    res_age = ft.Text("0", size=140, weight="bold", color=TEXT_MAIN)
-    res_name = ft.Text("Analytics Ready", size=28, weight="bold", color=TEXT_MAIN)
+    res_age = ft.Text("0", size=150, weight="bold", color=TEXT_MAIN)
+    res_name = ft.Text("Ready to Analyze", size=32, weight="bold", color=TEXT_MAIN)
     
-    # Custom Modern Progress Bar
     progress_fill = ft.Container(
-        width=0,
-        height=28,
+        width=0, height=24,
         gradient=ft.LinearGradient(begin=ft.Alignment(-1, 0), end=ft.Alignment(1, 0), colors=[ACCENT, ACCENT_LIGHT]),
-        border_radius=14,
-        animate=ft.Animation(800, ft.AnimationCurve.EASE_OUT_QUART)
+        border_radius=12,
+        animate=ft.Animation(1000, ft.AnimationCurve.EASE_OUT_QUART)
     )
     
     progress_track = ft.Container(
         content=ft.Stack([progress_fill]),
-        width=600,
-        height=28,
-        bgcolor="#F2F2F7",
-        border_radius=14,
-        padding=0,
+        width=550, height=24, bgcolor="#F2F2F7", border_radius=12,
         shadow=ft.BoxShadow(blur_radius=15, color=ft.Colors.with_opacity(0.05, ft.Colors.BLACK), offset=ft.Offset(0, 5))
     )
     
-    life_text = ft.Text("LIFE JOURNEY: --%", size=12, color=TEXT_SECONDARY, weight="bold")
+    life_text = ft.Text("LIFE JOURNEY PROGRESS: --%", size=11, color=TEXT_SECONDARY, weight="bold")
 
     cards = [
-        AnalyticsCard("ZODIAC SIGN", ft.Icons.STARS),
-        AnalyticsCard("NEXT BIRTHDAY", ft.Icons.CAKE),
-        AnalyticsCard("DAYS LIVED", ft.Icons.CALENDAR_MONTH),
-        AnalyticsCard("TOTAL WEEKS", ft.Icons.CALENDAR_VIEW_WEEK),
-        AnalyticsCard("HEARTBEATS", ft.Icons.FAVORITE),
-        AnalyticsCard("SLEEP & DREAMS", ft.Icons.BEDTIME)
+        AnalyticsCard("ZODIAC SIGN", ft.Icons.STARS, "#F59E0B"),
+        AnalyticsCard("NEXT BIRTHDAY", ft.Icons.CAKE, "#EC4899"),
+        AnalyticsCard("DAYS LIVED", ft.Icons.CALENDAR_MONTH, "#3B82F6"),
+        AnalyticsCard("TOTAL WEEKS", ft.Icons.CALENDAR_VIEW_WEEK, "#8B5CF6"),
+        AnalyticsCard("HEARTBEATS", ft.Icons.FAVORITE, "#EF4444"),
+        AnalyticsCard("SLEEP & DREAMS", ft.Icons.BEDTIME, "#10B981")
     ]
 
     grid = ft.ResponsiveRow([
@@ -121,7 +124,7 @@ def main(page: ft.Page):
 
     def calculate_click(e):
         try:
-            name = name_input.value or "User"
+            name = name_input.value or "Explorer"
             y, m, d = int(year_input.value), int(month_input.value), int(day_input.value)
             birth = datetime(y, m, d)
             today = datetime.now()
@@ -130,10 +133,10 @@ def main(page: ft.Page):
             diff = today - birth
             perc = min(1.0, age / 80)
             
-            res_name.value = f"Greetings, {name}"
+            res_name.value = f"Hi, {name}"
             res_age.value = str(age)
-            progress_fill.width = 600 * perc
-            life_text.value = f"LIFE JOURNEY: {int(perc*100)}%"
+            progress_fill.width = 550 * perc
+            life_text.value = f"LIFE JOURNEY PROGRESS: {int(perc*100)}%"
             
             cards[0].value_label.value = get_zodiac(m, d)
             try:
@@ -148,9 +151,10 @@ def main(page: ft.Page):
             cards[5].value_label.value = f"{int(age * 0.33)} Yrs"
 
             results_container.visible = True
+            results_container.opacity = 1
             page.update()
         except:
-            page.snack_bar = ft.SnackBar(ft.Text("Invalid date format!"))
+            page.snack_bar = ft.SnackBar(ft.Text("Invalid birth date!"))
             page.snack_bar.open = True
             page.update()
 
@@ -159,27 +163,27 @@ def main(page: ft.Page):
     left_panel = ft.Container(
         content=ft.Column([
             ft.Column([
-                ft.Text("AgePro", size=32, weight="bold", color=TEXT_MAIN),
-                ft.Image(src="Age.png", height=80, fit="contain"),
+                ft.Text("AgePro", size=34, weight="bold", color=TEXT_MAIN),
+                ft.Image(src="Age.png", height=85, fit="contain"),
             ], horizontal_alignment="center", spacing=10),
             ft.Container(height=50),
-            ft.Text("PERSONAL PROFILE", size=11, weight="bold", color=TEXT_SECONDARY),
+            ft.Text("MEMBER PROFILE", size=10, weight="bold", color=TEXT_SECONDARY, letter_spacing=1),
             name_input,
             ft.Container(height=15),
-            ft.Text("BIRTH DETAILS", size=11, weight="bold", color=TEXT_SECONDARY),
+            ft.Text("BIRTH REGISTRY", size=10, weight="bold", color=TEXT_SECONDARY, letter_spacing=1),
             ft.Row([year_input, month_input, day_input], spacing=10),
             ft.Container(height=40),
             ft.ElevatedButton(
-                content=ft.Text("ANALYZE ENGINE", weight="bold"),
+                content=ft.Text("GENERATE INSIGHTS", weight="bold"),
                 on_click=calculate_click,
-                height=56,
+                height=60,
                 width=float("inf"),
-                style=ft.ButtonStyle(bgcolor=ACCENT, color="white", shape=ft.RoundedRectangleBorder(radius=12))
+                style=ft.ButtonStyle(bgcolor=ACCENT, color="white", shape=ft.RoundedRectangleBorder(radius=15))
             ),
             ft.Container(expand=True),
-            ft.Row([ft.Text("Designed by Adheesha Sooriyaarachchi", size=10, color=TEXT_SECONDARY)], alignment="center")
+            ft.Row([ft.Text("Crafted by Adheesha Sooriyaarachchi", size=10, color=TEXT_SECONDARY, italic=True)], alignment="center")
         ], spacing=10, horizontal_alignment="center"),
-        width=420,
+        width=440,
         padding=60,
         bgcolor=BG_PANEL,
         border=ft.border.only(right=ft.BorderSide(1, BORDER_COLOR))
@@ -187,24 +191,32 @@ def main(page: ft.Page):
 
     hero_section = ft.Container(
         content=ft.Column([
+            ft.Container(
+                content=ft.Row([ft.Icon(ft.Icons.AUTO_GRAPH, color=ACCENT, size=16), ft.Text("LIVE ANALYTICS ENGINE", size=11, color=ACCENT, weight="bold")], alignment="center"),
+                bgcolor=ft.Colors.with_opacity(0.05, ACCENT),
+                padding=ft.padding.symmetric(12, 20),
+                border_radius=30,
+            ),
+            ft.Container(height=10),
             res_name,
             res_age,
-            ft.Text("YEARS OLD", size=16, weight="bold", color=TEXT_SECONDARY),
+            ft.Text("YEARS OLD", size=14, weight="bold", color=TEXT_SECONDARY),
             ft.Container(height=40),
             life_text,
             progress_track
         ], horizontal_alignment="center", spacing=0),
-        padding=ft.padding.all(40),
-        border_radius=32,
+        padding=60,
+        border_radius=40,
         bgcolor="#FFFFFF",
-        shadow=ft.BoxShadow(blur_radius=40, color=ft.Colors.with_opacity(0.04, ft.Colors.BLACK), offset=ft.Offset(0, 15)),
-        margin=ft.margin.only(bottom=30)
+        border=ft.border.all(1, BORDER_COLOR),
+        shadow=ft.BoxShadow(blur_radius=60, color=ft.Colors.with_opacity(0.05, ft.Colors.BLACK), offset=ft.Offset(0, 20)),
+        margin=ft.margin.only(bottom=50)
     )
 
     results_container = ft.Column([
         hero_section,
-        ft.Container(padding=ft.padding.only(left=20, right=20), content=grid)
-    ], expand=True, visible=False, animate_opacity=600, scroll="auto")
+        ft.Container(padding=ft.padding.only(left=10, right=10), content=grid)
+    ], expand=True, visible=False, animate_opacity=800, scroll="auto")
 
     page.add(
         ft.Row([
@@ -212,8 +224,9 @@ def main(page: ft.Page):
             ft.Container(
                 content=results_container,
                 expand=True,
-                bgcolor="#FFFFFF",
-                padding=60
+                bgcolor=BG_WHITE,
+                padding=70,
+                gradient=ft.LinearGradient(begin=ft.alignment.top_center, end=ft.alignment.bottom_center, colors=[BG_WHITE, BG_PANEL])
             )
         ], expand=True, spacing=0)
     )
