@@ -119,7 +119,7 @@ def main(page: ft.Page):
         BentoCard("ASTRONOMICAL SIGN", "--", ft.Icons.AUTO_AWESOME, ACCENT_AMBER, col_span={"sm": 12, "md": 4}),
         BentoCard("MILESTONE COUNTDOWN", "--", ft.Icons.TIMER, ACCENT_PINK),
         BentoCard("TOTAL EARTH DAYS", "--", ft.Icons.PUBLIC, ACCENT_TEAL),
-        BentoCard("CHRONOLOGICAL WEEKS", "--", ft.Icons.FORMAT_LIST_NUMBER, ACCENT),
+        BentoCard("CHRONOLOGICAL WEEKS", "--", ft.Icons.NUMBERS, ACCENT),
         BentoCard("ESTIMATED BEATS", "--", ft.Icons.WAVES, ft.Colors.RED_400),
         BentoCard("NEUROLOGICAL REST", "--", ft.Icons.SELF_IMPROVEMENT, ft.Colors.INDIGO_400)
     ]
