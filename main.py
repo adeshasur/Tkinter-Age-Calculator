@@ -1,6 +1,5 @@
 import flet as ft
-from datetime import datetime, date, timedelta
-import math
+from datetime import datetime, date
 
 # --- Constants ---
 AVG_LIFE_EXPECTANCY = 80
@@ -19,22 +18,22 @@ def get_zodiac(month, day):
 class StatCard(ft.Container):
     def __init__(self, title, icon, value_text=""):
         super().__init__()
-        self.value_label = ft.Text(value_text, size=26, weight="bold", color=ft.Colors.WHITE)
+        self.value_label = ft.Text(value_text, size=26, weight="bold", color="#1E293B")
         self.content = ft.Column(
             [
-                ft.Row([ft.Icon(icon, color=ft.Colors.CYAN_400, size=20), ft.Text(title, size=12, color=ft.Colors.BLUE_GREY_400, weight="w600", font_family="SF Pro Text")], spacing=10),
+                ft.Row([ft.Icon(icon, color="#007AFF", size=20), ft.Text(title, size=12, color="#64748B", weight="w600")], spacing=10),
                 self.value_label,
             ],
             spacing=5,
         )
         self.padding = 25
         self.border_radius = 24
-        self.bgcolor = ft.Colors.with_opacity(0.05, ft.Colors.WHITE)
-        self.border = ft.Border(
-            ft.BorderSide(1, ft.Colors.with_opacity(0.1, ft.Colors.WHITE)),
-            ft.BorderSide(1, ft.Colors.with_opacity(0.1, ft.Colors.WHITE)),
-            ft.BorderSide(1, ft.Colors.with_opacity(0.1, ft.Colors.WHITE)),
-            ft.BorderSide(1, ft.Colors.with_opacity(0.1, ft.Colors.WHITE))
+        self.bgcolor = ft.Colors.WHITE
+        self.shadow = ft.BoxShadow(
+            spread_radius=1,
+            blur_radius=15,
+            color=ft.Colors.with_opacity(0.05, ft.Colors.BLACK),
+            offset=ft.Offset(0, 5),
         )
         self.animate_scale = ft.Animation(300, ft.AnimationCurve.DECELERATE)
         self.on_hover = self.hover_effect
@@ -42,31 +41,31 @@ class StatCard(ft.Container):
 
     def hover_effect(self, e):
         self.scale = 1.05 if e.data == "true" else 1.0
-        self.bgcolor = ft.Colors.with_opacity(0.1, ft.Colors.WHITE) if e.data == "true" else ft.Colors.with_opacity(0.05, ft.Colors.WHITE)
+        self.shadow.blur_radius = 25 if e.data == "true" else 15
         self.update()
 
 def main(page: ft.Page):
-    page.title = "Age Pro - Elite Analytics"
+    page.title = "Age Pro - Clean Elite"
     page.window_width = 1200
     page.window_height = 900
-    page.bgcolor = "#050810"
+    page.bgcolor = "#F8FAFC"
     page.padding = 0
     page.fonts = {
         "Outfit": "https://github.com/google/fonts/raw/main/ofl/outfit/Outfit-VariableFont_wght.ttf"
     }
-    page.theme = ft.Theme(font_family="Outfit")
+    page.theme = ft.Theme(font_family="Outfit", color_scheme_seed="#007AFF")
 
     # --- UI Elements ---
     
-    name_input = ft.TextField(label="Full Name", border_radius=15, border_color=ft.Colors.BLUE_GREY_800, focused_border_color=ft.Colors.CYAN_400, label_style=ft.TextStyle(color=ft.Colors.BLUE_GREY_500))
-    year_input = ft.TextField(label="Year", border_radius=15, width=110, border_color=ft.Colors.BLUE_GREY_800)
-    month_input = ft.TextField(label="Month", border_radius=15, width=100, border_color=ft.Colors.BLUE_GREY_800)
-    day_input = ft.TextField(label="Day", border_radius=15, width=90, border_color=ft.Colors.BLUE_GREY_800)
+    name_input = ft.TextField(label="Full Name", border_radius=15, border_color="#E2E8F0", focused_border_color="#007AFF", bgcolor="#FFFFFF")
+    year_input = ft.TextField(label="Year", border_radius=15, width=110, border_color="#E2E8F0", bgcolor="#FFFFFF")
+    month_input = ft.TextField(label="Month", border_radius=15, width=100, border_color="#E2E8F0", bgcolor="#FFFFFF")
+    day_input = ft.TextField(label="Day", border_radius=15, width=90, border_color="#E2E8F0", bgcolor="#FFFFFF")
 
-    res_age = ft.Text("0", size=120, weight="bold", color=ft.Colors.CYAN_400)
-    res_name = ft.Text("", size=28, weight="bold", color=ft.Colors.WHITE)
-    life_progress = ft.ProgressBar(width=400, color=ft.Colors.CYAN_400, bgcolor=ft.Colors.BLUE_GREY_900, height=8, border_radius=5)
-    progress_text = ft.Text("Life Journey Progress: 0%", size=14, color=ft.Colors.BLUE_GREY_400)
+    res_age = ft.Text("0", size=120, weight="bold", color="#007AFF")
+    res_name = ft.Text("", size=28, weight="bold", color="#1E293B")
+    life_progress = ft.ProgressBar(width=400, color="#007AFF", bgcolor="#E2E8F0", height=8, border_radius=5)
+    progress_text = ft.Text("Life Journey Progress: 0%", size=14, color="#64748B")
     
     card_zodiac = StatCard("Zodiac Sign", ft.Icons.STARS)
     card_days = StatCard("Days Lived", ft.Icons.CALENDAR_MONTH)
@@ -81,23 +80,19 @@ def main(page: ft.Page):
                 content=ft.Column([
                     res_name, 
                     res_age, 
-                    ft.Text("YEARS OLD", size=16, weight="bold", color=ft.Colors.BLUE_GREY_500),
+                    ft.Text("YEARS OLD", size=16, weight="bold", color="#94A3B8"),
                     ft.Divider(height=40, color="transparent"),
                     progress_text,
                     life_progress
                 ], horizontal_alignment="center", spacing=0),
                 padding=60,
                 border_radius=40,
-                gradient=ft.LinearGradient(
-                    begin=ft.Alignment(-1, -1),
-                    end=ft.Alignment(1, 1),
-                    colors=[ft.Colors.with_opacity(0.1, ft.Colors.CYAN_700), ft.Colors.with_opacity(0.02, ft.Colors.BLACK)]
-                ),
-                border=ft.Border(
-                    ft.BorderSide(1, ft.Colors.with_opacity(0.2, ft.Colors.CYAN_400)),
-                    ft.BorderSide(1, ft.Colors.with_opacity(0.2, ft.Colors.CYAN_400)),
-                    ft.BorderSide(1, ft.Colors.with_opacity(0.2, ft.Colors.CYAN_400)),
-                    ft.BorderSide(1, ft.Colors.with_opacity(0.2, ft.Colors.CYAN_400))
+                bgcolor="#FFFFFF",
+                shadow=ft.BoxShadow(
+                    spread_radius=1,
+                    blur_radius=30,
+                    color=ft.Colors.with_opacity(0.08, ft.Colors.BLACK),
+                    offset=ft.Offset(0, 10),
                 ),
                 margin=ft.Margin(0, 0, 0, 30)
             ),
@@ -151,7 +146,7 @@ def main(page: ft.Page):
             dashboard.opacity = 1
             page.update()
         except:
-            page.snack_bar = ft.SnackBar(ft.Text("Invalid birth date. Please check!"))
+            page.snack_bar = ft.SnackBar(ft.Text("Invalid birth date!"))
             page.snack_bar.open = True
             page.update()
 
@@ -161,30 +156,29 @@ def main(page: ft.Page):
         content=ft.Column(
             [
                 ft.Image(src="Age.png", height=100, fit="contain"),
-                ft.Text("AGE PRO", size=28, weight="bold", color=ft.Colors.WHITE),
-                ft.Text("ELITE ANALYTICS ENGINE", size=10, color=ft.Colors.CYAN_400, weight="bold"),
-                ft.Divider(height=60, color=ft.Colors.BLUE_GREY_900),
+                ft.Text("AGE PRO", size=28, weight="bold", color="#1E293B"),
+                ft.Text("ELITE ANALYTICS ENGINE", size=10, color="#007AFF", weight="bold"),
+                ft.Divider(height=60, color="#F1F5F9"),
                 name_input,
                 ft.Row([year_input, month_input, day_input], spacing=10, alignment=ft.MainAxisAlignment.CENTER),
-                ft.Container(padding=10), # Spacer
+                ft.Container(padding=10),
                 ft.ElevatedButton(
                     content=ft.Row([ft.Icon(ft.Icons.AUTO_GRAPH), ft.Text("RUN ANALYSIS", weight="bold")], alignment="center"),
-                    bgcolor=ft.Colors.CYAN_700, 
+                    bgcolor="#007AFF", 
                     color=ft.Colors.WHITE, 
                     height=60, 
                     on_click=calculate_click,
                     style=ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=15))
                 ),
                 ft.Container(expand=True),
-                ft.Text("F11 for Focus Mode", size=11, color=ft.Colors.BLUE_GREY_600),
+                ft.Text("F11 for Focus Mode", size=11, color="#94A3B8"),
             ],
             spacing=15,
             horizontal_alignment="center",
         ),
         width=400,
         padding=50,
-        bgcolor="#0B1120",
-        border_radius=0,
+        bgcolor="#F1F5F9",
     )
 
     page.add(
@@ -195,11 +189,7 @@ def main(page: ft.Page):
                     content=ft.Column([dashboard], expand=True, scroll="auto", alignment="start"),
                     expand=True,
                     padding=60,
-                    gradient=ft.RadialGradient(
-                        center=ft.Alignment(0, -0.5),
-                        radius=1.5,
-                        colors=["#0D1525", "#050810"]
-                    )
+                    bgcolor="#F8FAFC"
                 )
             ],
             expand=True,
