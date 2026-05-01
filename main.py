@@ -226,7 +226,7 @@ def main(page: ft.Page):
                 expand=True,
                 bgcolor=BG_WHITE,
                 padding=70,
-                gradient=ft.LinearGradient(begin=ft.alignment.top_center, end=ft.alignment.bottom_center, colors=[BG_WHITE, BG_PANEL])
+                gradient=ft.LinearGradient(begin=ft.Alignment(0, -1), end=ft.Alignment(0, 1), colors=[BG_WHITE, BG_PANEL])
             )
         ], expand=True, spacing=0)
     )
