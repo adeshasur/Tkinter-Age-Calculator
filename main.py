@@ -73,7 +73,6 @@ def main(page: ft.Page):
 
     res_age = ft.Text("0", size=100, weight="bold", color="#007AFF")
     res_name = ft.Text("", size=24, weight="bold", color="#1E293B")
-    # ENLARGED PROGRESS BAR
     life_progress = ft.ProgressBar(width=500, color="#007AFF", bgcolor="#E2E8F0", height=12, border_radius=10)
     progress_text = ft.Text("Life Journey Progress: 0%", size=14, color="#64748B", weight="w500")
     
@@ -84,6 +83,7 @@ def main(page: ft.Page):
     card_sleep = StatCard("Dreaming", ft.Icons.BEDTIME)
     card_next = StatCard("Next Birthday", ft.Icons.CAKE)
 
+    # Dashboard Container
     dashboard = ft.Column(
         [
             ft.Container(
@@ -95,7 +95,7 @@ def main(page: ft.Page):
                     progress_text,
                     life_progress
                 ], horizontal_alignment="center", spacing=0),
-                padding=35,
+                padding=60, # INCREASED VERTICAL HEIGHT
                 border_radius=30,
                 bgcolor="#FFFFFF",
                 gradient=ft.RadialGradient(
@@ -209,7 +209,7 @@ def main(page: ft.Page):
                 ft.Container(
                     content=ft.Column([dashboard], scroll="auto", alignment=ft.MainAxisAlignment.START),
                     expand=True,
-                    padding=ft.Padding(40, 0, 40, 40),
+                    padding=ft.Padding(40, 0, 40, 40), # NO TOP PADDING
                     bgcolor="#F8FAFC"
                 )
             ],
