@@ -84,7 +84,7 @@ def main(page: ft.Page):
     progress_fill = ft.Container(
         width=0,
         height=28,
-        gradient=ft.LinearGradient(begin=ft.alignment.center_left, end=ft.alignment.center_right, colors=[ACCENT, ACCENT_LIGHT]),
+        gradient=ft.LinearGradient(begin=ft.Alignment(-1, 0), end=ft.Alignment(1, 0), colors=[ACCENT, ACCENT_LIGHT]),
         border_radius=14,
         animate=ft.Animation(800, ft.AnimationCurve.EASE_OUT_QUART)
     )
