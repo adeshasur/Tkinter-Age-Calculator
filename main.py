@@ -57,10 +57,19 @@ def main(page: ft.Page):
 
     # --- UI Elements ---
     
-    name_input = ft.TextField(label="Full Name", border_radius=15, border_color="#E2E8F0", focused_border_color="#007AFF", bgcolor="#FFFFFF")
-    year_input = ft.TextField(label="Year", border_radius=15, width=110, border_color="#E2E8F0", bgcolor="#FFFFFF")
-    month_input = ft.TextField(label="Month", border_radius=15, width=100, border_color="#E2E8F0", bgcolor="#FFFFFF")
-    day_input = ft.TextField(label="Day", border_radius=15, width=90, border_color="#E2E8F0", bgcolor="#FFFFFF")
+    input_style = {
+        "border_radius": 15,
+        "border_color": "#E2E8F0",
+        "focused_border_color": "#007AFF",
+        "bgcolor": "#FFFFFF",
+        "color": "#1E293B",  # DARK TEXT COLOR
+        "label_style": ft.TextStyle(color="#64748B") # VISIBLE LABEL
+    }
+
+    name_input = ft.TextField(label="Full Name", **input_style)
+    year_input = ft.TextField(label="Year", width=110, **input_style)
+    month_input = ft.TextField(label="Month", width=100, **input_style)
+    day_input = ft.TextField(label="Day", width=90, **input_style)
 
     res_age = ft.Text("0", size=120, weight="bold", color="#007AFF")
     res_name = ft.Text("", size=28, weight="bold", color="#1E293B")
