@@ -3,6 +3,7 @@ from datetime import datetime, date
 
 # --- Global Style Config ---
 ACCENT = "#007AFF"
+ACCENT_LIGHT = "#5AC8FA"
 BG_WHITE = "#FFFFFF"
 BG_PANEL = "#FBFBFC"
 TEXT_MAIN = "#1D1D1F"
@@ -76,10 +77,29 @@ def main(page: ft.Page):
 
     # --- Right Panel: Results Area ---
     
-    res_age = ft.Text("0", size=180, weight="bold", color=ACCENT)
+    res_age = ft.Text("0", size=180, weight="bold", color=TEXT_MAIN)
     res_name = ft.Text("Analytics Ready", size=32, weight="bold", color=TEXT_MAIN)
-    life_bar = ft.ProgressBar(width=500, height=12, color=ACCENT, bgcolor="#F2F2F7", border_radius=6, value=0)
-    life_text = ft.Text("JOURNEY PROGRESS: --%", size=11, color=TEXT_SECONDARY, weight="bold")
+    
+    # Custom Modern Progress Bar
+    progress_fill = ft.Container(
+        width=0,
+        height=28,
+        gradient=ft.LinearGradient(begin=ft.alignment.center_left, end=ft.alignment.center_right, colors=[ACCENT, ACCENT_LIGHT]),
+        border_radius=14,
+        animate=ft.Animation(800, ft.AnimationCurve.EASE_OUT_QUART)
+    )
+    
+    progress_track = ft.Container(
+        content=ft.Stack([progress_fill]),
+        width=600,
+        height=28,
+        bgcolor="#F2F2F7",
+        border_radius=14,
+        padding=0,
+        shadow=ft.BoxShadow(blur_radius=15, color=ft.Colors.with_opacity(0.05, ft.Colors.BLACK), offset=ft.Offset(0, 5))
+    )
+    
+    life_text = ft.Text("LIFE JOURNEY: --%", size=12, color=TEXT_SECONDARY, weight="bold")
 
     cards = [
         AnalyticsCard("ZODIAC SIGN", ft.Icons.STARS),
@@ -112,8 +132,8 @@ def main(page: ft.Page):
             
             res_name.value = f"Greetings, {name}"
             res_age.value = str(age)
-            life_bar.value = perc
-            life_text.value = f"JOURNEY PROGRESS: {int(perc*100)}%"
+            progress_fill.width = 600 * perc
+            life_text.value = f"LIFE JOURNEY: {int(perc*100)}%"
             
             cards[0].value_label.value = get_zodiac(m, d)
             try:
@@ -140,7 +160,7 @@ def main(page: ft.Page):
         content=ft.Column([
             ft.Column([
                 ft.Text("AgePro", size=32, weight="bold", color=TEXT_MAIN),
-                ft.Image(src="Age.png", height=75, fit="contain"),
+                ft.Image(src="Age.png", height=80, fit="contain"),
             ], horizontal_alignment="center", spacing=10),
             ft.Container(height=50),
             ft.Text("PERSONAL PROFILE", size=11, weight="bold", color=TEXT_SECONDARY),
@@ -170,14 +190,14 @@ def main(page: ft.Page):
             res_name,
             res_age,
             ft.Text("YEARS OLD", size=16, weight="bold", color=TEXT_SECONDARY),
-            ft.Container(height=30),
+            ft.Container(height=40),
             life_text,
-            life_bar
+            progress_track
         ], horizontal_alignment="center", spacing=0),
         padding=60,
         border_radius=40,
         bgcolor="#FFFFFF",
-        shadow=ft.BoxShadow(blur_radius=50, color=ft.Colors.with_opacity(0.05, ft.Colors.BLACK), offset=ft.Offset(0, 20)),
+        shadow=ft.BoxShadow(blur_radius=50, color=ft.Colors.with_opacity(0.06, ft.Colors.BLACK), offset=ft.Offset(0, 20)),
         margin=ft.margin.only(bottom=50)
     )
 
